@@ -29,10 +29,6 @@ paths:
               schema:
                 type: object
                 properties:
-                  status:
-                    type: integer
-                    description: Status code of the response
-                    example: 200
                   message:
                     type: string
                     description: Love letter from server ❤️
@@ -60,16 +56,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    description: Status code of the response
-                    example: 401
-                  message:
-                    type: string
-                    description: Love letter from server ❤️
-                    example: Unauthorized
+                $ref: '#/components/schemas/inline_response_401'
       summary: Get all provinces
   '/api/general/regencies/{provinceId}':
     get:
@@ -99,10 +86,6 @@ paths:
               schema:
                 type: object
                 properties:
-                  status:
-                    type: integer
-                    description: Status code of the response
-                    example: 200
                   message:
                     type: string
                     description: Love letter from server ❤️
@@ -145,10 +128,6 @@ paths:
               schema:
                 type: object
                 properties:
-                  status:
-                    type: integer
-                    description: Status code of the response
-                    example: 404
                   message:
                     type: string
                     description: Love letter from server ❤️
@@ -158,16 +137,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    description: Status code of the response
-                    example: 401
-                  message:
-                    type: string
-                    description: Love letter from server ❤️
-                    example: Unauthorized
+                $ref: '#/components/schemas/inline_response_401'
       summary: Get all regencies from a province
 
   '/api/general/districts/{regencyId}':
@@ -198,10 +168,6 @@ paths:
               schema:
                 type: object
                 properties:
-                  status:
-                    type: integer
-                    description: Status code of the response
-                    example: 200
                   message:
                     type: string
                     description: Love letter from server ❤️
@@ -244,10 +210,6 @@ paths:
               schema:
                 type: object
                 properties:
-                  status:
-                    type: integer
-                    description: Status code of the response
-                    example: 404
                   message:
                     type: string
                     description: Love letter from server ❤️
@@ -257,14 +219,152 @@ paths:
           content:
             application/json:
               schema:
+                $ref: '#/components/schemas/inline_response_401'
+      summary: Get all districts from a regency
+
+  '/api/general/animals':
+    get:
+      tags:
+        - Animals
+      description: Get or search all animals, add query to your parameters to search for animals
+      parameters:
+        - name: api_key
+          in: query
+          required: true
+          description: API key provided by Farrel Anshary
+          schema:
+            type: string
+          example: asdasd
+        - name: query
+          in: query
+          required: false
+          description: Search query (optional)
+          schema:
+            type: string
+          example: Harimau jawa
+      summary: Get / search all animals
+      responses:
+        '200':
+          description: Successfully get animals
+          content:
+            application/json:
+              schema:
                 type: object
                 properties:
-                  status:
-                    type: integer
-                    description: Status code of the response
-                    example: 401
                   message:
                     type: string
                     description: Love letter from server ❤️
-                    example: Unauthorized
-      summary: Get all districts from a regency
+                    example: "Successfully get animals"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      animals:
+                        type: array
+                        description: Animals data
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: ID represents a unique identifier of the animal
+                              example: 1
+                            name:
+                              type: string
+                              description: Name of the animal
+                              example: Harimau Sumatera
+        '401':
+          description: Unauthorized user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
+    post:
+      tags:
+        - Animals
+      summary: Create a new animal
+      description: Create a new animal data to database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - api_key
+                - name
+              properties:
+                api_key:
+                  type: string
+                  description: API key provided by Farrel Anshary
+                  example: asdasd
+                name:
+                  type: string
+                  description: Name of the animal
+                  example: Jackie Leonardy
+      responses:
+        '201':
+          description: Successfully create new animal
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully add new animal"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      animal:
+                        type: object
+                        description: Created animal data
+                        properties:
+                          id:
+                            type: integer
+                            description: ID represents a unique identifier of the animal
+                            example: 1
+                          name:
+                            type: string
+                            description: Name of the animal
+                            example: Harimau Sumatera
+        '401':
+          description: Unauthorized user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "The given data was invalid."
+                  errors:
+                    type: object
+                    description: List of error fields
+                    properties:
+                      name:
+                        type: array
+                        description: List of errors in one field
+                        items:
+                          type: name
+                          example: The name field is required.
+
+components:
+  schemas:
+    inline_response_401:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Love letter from server ❤️
+          example: Unauthorized

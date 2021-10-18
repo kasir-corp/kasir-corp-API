@@ -13,7 +13,6 @@ class ResponseHelper {
      */
     public static function response(string $message, int $status, $data = null) {
         $resp = [
-            'status' => $status,
             'message' => $message,
         ];
 

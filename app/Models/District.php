@@ -10,5 +10,5 @@ class District extends Model
     use HasFactory;
 
     protected $table = "districts";
-    protected $fillables = ["id", "name", "regency_id"];
+    protected $fillable = ["id", "name", "regency_id"];
 }

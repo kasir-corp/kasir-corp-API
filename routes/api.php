@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\RegionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,4 +24,7 @@ Route::group(["prefix" => "general", "middleware" => "apikey"], function() {
     Route::get("/provinces", [RegionController::class, 'getProvinces']);
     Route::get("/regencies/{provinceId}", [RegionController::class, 'getRegencies']);
     Route::get("/districts/{regencyId}", [RegionController::class, 'getDistricts']);
+
+    Route::get('/animals', [AnimalController::class, 'getAllAnimals']);
+    Route::post('/animals', [AnimalController::class, 'store']);
 });
