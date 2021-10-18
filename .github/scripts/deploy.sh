@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e pipeline
 
-echo "Checkout to release branch"
-git checkout release
+echo "Checkout to main branch"
+git checkout main
 
 echo "Pull from repository"
 git pull
