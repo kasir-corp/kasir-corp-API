@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ResponseHelper;
 use App\Models\Province;
 use App\Models\Regency;
 use Illuminate\Http\Request;
@@ -11,28 +12,50 @@ class RegionController extends Controller
 {
     public function getProvinces()
     {
-        $provinces = Cache::remember('provinces', 600, function() {
+        $provinces = Cache::rememberForever('provinces', function() {
             return Province::all();
         });
 
-        return $provinces;
+        return ResponseHelper::response(
+            "Successfully get all provinces",
+            ['provinces' => $provinces],
+            200
+        );
     }
 
     public function getRegencies($provinceId)
     {
-        $regencies = Cache::remember("regencies_$provinceId", 600, function() use ($provinceId) {
-            return Province::with('regencies')->findOrFail($provinceId);
+        $province = Cache::rememberForever("regencies_$provinceId", function() use ($provinceId) {
+            $province = Province::with('regencies:id,name,province_id')->findOrFail($provinceId, ['id', 'name']);
+            foreach ($province->regencies as $regency) {
+                unset($regency->province_id);
+            }
+
+            return $province;
         });
 
-        return $regencies;
+        return ResponseHelper::response(
+            "Successfully get all regencies in $province->name",
+            ['province' => $province],
+            200
+        );
     }
 
     public function getDistricts($regencyId)
     {
-        $districts = Cache::remember("districts_$regencyId", 600, function() use ($regencyId) {
-            return Regency::with('districts')->findOrFail($regencyId);
+        $regency = Cache::rememberForever("districts_$regencyId", function() use ($regencyId) {
+            $regency = Regency::with('districts:id,name,regency_id')->findOrFail($regencyId, ['id', 'name']);
+            foreach ($regency->districts as $district) {
+                unset($district->regency_id);
+            }
+
+            return $regency;
         });
 
-        return $districts;
+        return ResponseHelper::response(
+            "Successfully get all districts in $regency->name",
+            ['regency' => $regency],
+            200
+        );
     }
 }
