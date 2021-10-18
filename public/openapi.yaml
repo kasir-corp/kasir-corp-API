@@ -1,0 +1,270 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://kasir.farrelanshary.me/
+info:
+  version: "1.0.0"
+  title: Kasir API
+  description: API punya kasir cug, jangan dicari
+paths:
+  '/api/general/provinces':
+    get:
+      tags:
+        - Region
+      description: Returns all provinces in Indonesia
+      parameters:
+        - name: api_key
+          in: query
+          description: API key provided by Farrel Anshary
+          required: true
+          schema:
+            type: string
+          example: asdasd
+      responses:
+        '200':
+          description: All provinces
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Status code of the response
+                    example: 200
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully get all provinces"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      provinces:
+                        type: array
+                        description: Single province data
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: ID represents a unique identifier of the province
+                              example: 11
+                            name:
+                              type: string
+                              description: Name of the province
+                              example: "ACEH"
+        '401':
+          description: Unauthorized user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Status code of the response
+                    example: 401
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: Unauthorized
+      summary: Get all provinces
+  '/api/general/regencies/{provinceId}':
+    get:
+      tags:
+        - Region
+      description: Returns all regencies in specified province
+      parameters:
+        - name: provinceId
+          in: path
+          required: true
+          description: Province id acquired from provinces
+          schema:
+            type: integer
+          example: 32
+        - name: api_key
+          in: query
+          required: true
+          description: API key provided by Farrel Anshary
+          schema:
+            type: string
+          example: asdasd
+      responses:
+        '200':
+          description: All regencies in this province
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Status code of the response
+                    example: 200
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully get all regencies in JAWA BARAT"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      province:
+                        type: object
+                        description: Single province data
+                        properties:
+                          id:
+                            type: integer
+                            description: ID represents a unique identifier of the province
+                            example: 32
+                          name:
+                            type: string
+                            description: Name of the province
+                            example: JAWA BARAT
+                          regencies:
+                            type: array
+                            description: Regencies in specified province
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  description: ID represents a unique identifier of the regency
+                                  example: 3201
+                                name:
+                                  type: string
+                                  description: Name of the regency
+                                  example: KABUPATEN BOGOR
+
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Status code of the response
+                    example: 404
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "No query results for model [App\\Models\\Province] 322"
+        '401':
+          description: Unauthorized user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Status code of the response
+                    example: 401
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: Unauthorized
+      summary: Get all regencies from a province
+
+  '/api/general/districts/{regencyId}':
+    get:
+      tags:
+        - Region
+      description: Returns all regencies in specified province
+      parameters:
+        - name: regencyId
+          in: path
+          required: true
+          description: Regency id acquired from regencies
+          schema:
+            type: integer
+          example: 32
+        - name: api_key
+          in: query
+          required: true
+          description: API key provided by Farrel Anshary
+          schema:
+            type: string
+          example: asdasd
+      responses:
+        '200':
+          description: All districts in this regency
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Status code of the response
+                    example: 200
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully get all districts in KOTA BANDUNG"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      regency:
+                        type: object
+                        description: Single regency data
+                        properties:
+                          id:
+                            type: integer
+                            description: ID represents a unique identifier of the regency
+                            example: 3273
+                          name:
+                            type: string
+                            description: Name of the regency
+                            example: KOTA BANDUNG
+                          districts:
+                            type: array
+                            description: Districts in specified regency
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  description: ID represents a unique identifier of the district
+                                  example: 3273010
+                                name:
+                                  type: string
+                                  description: Name of the district
+                                  example: BANDUNG KULON
+
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Status code of the response
+                    example: 404
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "No query results for model [App\\Models\\Regency] 32734"
+        '401':
+          description: Unauthorized user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Status code of the response
+                    example: 401
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: Unauthorized
+      summary: Get all districts from a regency

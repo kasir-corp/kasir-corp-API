@@ -3,11 +3,23 @@
 namespace App\Helpers;
 
 class ResponseHelper {
-    public static function response(string $message, $data, int $status) {
-        return response()->json([
+    /**
+     * Create a response template
+     *
+     * @param  string $message
+     * @param  array()|object $data
+     * @param  int $status
+     * @return Illuminate\Http\Response;
+     */
+    public static function response(string $message, int $status, $data = null) {
+        $resp = [
             'status' => $status,
             'message' => $message,
-            'data' => $data
-        ], $status);
+        ];
+
+        if ($data != null) {
+            $resp['data'] = $data;
+        }
+        return response()->json($resp, $status);
     }
 }

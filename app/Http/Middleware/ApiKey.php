@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\ResponseHelper;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -20,6 +21,6 @@ class ApiKey
             return $next($request);
         }
 
-        return response()->json(["message" => "Unauthorized"], 401);
+        return ResponseHelper::response("Unauthorized", 401);
     }
 }
