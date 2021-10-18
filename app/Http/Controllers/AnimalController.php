@@ -48,6 +48,8 @@ class AnimalController extends Controller
         ]);
 
         if ($animal->save()) {
+            Cache::put('animals', Animal::all(['id', 'name']));
+
             return ResponseHelper::response(
                 "Successfully add new animal",
                 201,
