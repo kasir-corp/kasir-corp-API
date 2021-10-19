@@ -1,8 +1,7 @@
 openapi: 3.0.0
 servers:
   # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://kasir.farrelanshary.me/
+  - url: https://kasir.farrelanshary.me/
 info:
   version: "1.0.0"
   title: Kasir API
@@ -330,6 +329,280 @@ paths:
                             type: string
                             description: Name of the animal
                             example: Harimau Sumatera
+        '401':
+          description: Unauthorized user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "The given data was invalid."
+                  errors:
+                    type: object
+                    description: List of error fields
+                    properties:
+                      name:
+                        type: array
+                        description: List of errors in one field
+                        items:
+                          type: name
+                          example: The name field is required.
+
+  '/api/general/organizations':
+    get:
+      tags:
+        - Organizations
+      description: Get or search all organizations, add query to your parameters to search for organizations
+      parameters:
+        - name: api_key
+          in: query
+          required: true
+          description: API key provided by Farrel Anshary
+          schema:
+            type: string
+          example: asdasd
+        - name: query
+          in: query
+          required: false
+          description: Search query (optional)
+          schema:
+            type: string
+          example: IAR
+      summary: Get / search all organizations
+      responses:
+        '200':
+          description: Successfully get organizations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully get organizations"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      organizations:
+                        type: array
+                        description: Organizations data
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: ID represents a unique identifier of the organization
+                              example: 1
+                            name:
+                              type: string
+                              description: Name of the organization
+                              example: IAR
+        '401':
+          description: Unauthorized user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
+    post:
+      tags:
+        - Organizations
+      summary: Create a new organization
+      description: Create a new organization data to database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - api_key
+                - name
+              properties:
+                api_key:
+                  type: string
+                  description: API key provided by Farrel Anshary
+                  example: asdasd
+                name:
+                  type: string
+                  description: Name of the organization
+                  example: WWF
+      responses:
+        '201':
+          description: Successfully create new organization
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully add new organization"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      organization:
+                        type: object
+                        description: Created organization data
+                        properties:
+                          id:
+                            type: integer
+                            description: ID represents a unique identifier of the organization
+                            example: 1
+                          name:
+                            type: string
+                            description: Name of the organization
+                            example: WWF
+        '401':
+          description: Unauthorized user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "The given data was invalid."
+                  errors:
+                    type: object
+                    description: List of error fields
+                    properties:
+                      name:
+                        type: array
+                        description: List of errors in one field
+                        items:
+                          type: name
+                          example: The name field is required.
+
+  '/api/general/sites':
+    get:
+      tags:
+        - Sites
+      description: Get or search all sites, add query to your parameters to search for sites
+      parameters:
+        - name: api_key
+          in: query
+          required: true
+          description: API key provided by Farrel Anshary
+          schema:
+            type: string
+          example: asdasd
+        - name: query
+          in: query
+          required: false
+          description: Search query (optional)
+          schema:
+            type: string
+          example: Kompas.com
+      summary: Get / search all sites
+      responses:
+        '200':
+          description: Successfully get sites
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully get sites"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      sites:
+                        type: array
+                        description: Sites data
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: ID represents a unique identifier of the website
+                              example: 1
+                            name:
+                              type: string
+                              description: Name of the website
+                              example: IAR
+        '401':
+          description: Unauthorized user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
+    post:
+      tags:
+        - Sites
+      summary: Create a new site
+      description: Create a new site data to database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - api_key
+                - name
+              properties:
+                api_key:
+                  type: string
+                  description: API key provided by Farrel Anshary
+                  example: asdasd
+                name:
+                  type: string
+                  description: Name of the site
+                  example: detik.com
+      responses:
+        '201':
+          description: Successfully create new site
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully add new site"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      site:
+                        type: object
+                        description: Created site data
+                        properties:
+                          id:
+                            type: integer
+                            description: ID represents a unique identifier of the website
+                            example: 1
+                          name:
+                            type: string
+                            description: Name of the website
+                            example: detik.com
         '401':
           description: Unauthorized user
           content:

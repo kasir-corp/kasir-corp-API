@@ -13,7 +13,7 @@ class AnimalController extends Controller
      * Get all animals
      *
      * @param \Illuminate\Http\Request $request
-     * @return \App\Helpers\Illuminate\Http\Response;
+     * @return \Illuminate\Http\Response;
      */
     public function getAllAnimals(Request $request)
     {
@@ -37,6 +37,12 @@ class AnimalController extends Controller
         );
     }
 
+    /**
+     * Save new animal
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response;
+     */
     public function store(Request $request)
     {
         $request->validate([

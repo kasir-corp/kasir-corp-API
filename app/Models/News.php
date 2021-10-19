@@ -16,4 +16,14 @@ class News extends Model
     {
         return $this->belongsToMany(Animal::class, 'animal_news', 'animal_id', 'news_id');
     }
+
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class);
+    }
+
+    public function site()
+    {
+        return $this->belongsTo(Site::class);
+    }
 }

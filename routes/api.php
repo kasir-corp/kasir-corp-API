@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AnimalController;
+use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\RegionController;
+use App\Http\Controllers\SiteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,4 +29,10 @@ Route::group(["prefix" => "general", "middleware" => "apikey"], function() {
 
     Route::get('/animals', [AnimalController::class, 'getAllAnimals']);
     Route::post('/animals', [AnimalController::class, 'store']);
+
+    Route::get('/organizations', [OrganizationController::class, 'getAllOrganizations']);
+    Route::post('/organizations', [OrganizationController::class, 'store']);
+
+    Route::get('/sites', [SiteController::class, 'getAllSites']);
+    Route::post('/sites', [SiteController::class, 'store']);
 });
