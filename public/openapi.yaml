@@ -355,7 +355,11 @@ paths:
                         type: array
                         description: List of errors in one field
                         items:
-                          example: The name field is required.
+                          type: string
+                        example: [
+                          "The name field is required.",
+                          "The name has already been taken."
+                        ]
 
   '/api/general/organizations':
     get:
@@ -491,7 +495,11 @@ paths:
                         type: array
                         description: List of errors in one field
                         items:
-                          example: The name field is required.
+                          type: string
+                        example: [
+                          "The name field is required.",
+                          "The name has already been taken."
+                        ]
 
   '/api/general/sites':
     get:
@@ -627,7 +635,11 @@ paths:
                         type: array
                         description: List of errors in one field
                         items:
-                          example: The name field is required.
+                          type: string
+                        example: [
+                          "The name field is required.",
+                          "The name has already been taken."
+                        ]
 
   '/api/general/news':
     get:
@@ -688,7 +700,7 @@ paths:
                             label:
                               type: string
                               description: Label of the news
-                              example: "Perburuan"
+                              example: "perburuan"
                             organization:
                               type: object
                               description: Organization involved in the news
@@ -774,6 +786,303 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/inline_response_401'
+
+    post:
+      tags:
+        - News
+      summary: Create a new news
+      description: Create a new news data to database
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - api_key
+                - title
+                - url
+                - isTrained
+                - animals
+                - label
+              properties:
+                api_key:
+                  type: string
+                  description: API key provided by Farrel Anshary
+                  example: asdasd
+                title:
+                  type: string
+                  description: Title of the news
+                  example: KKP Gagalkan Penangkapan Penyu Hijau Ilegal di Desa Waduwalla
+                url:
+                  type: string
+                  description: URL of the news
+                  example: https://borneo24.com/headlines/kkp-gagalkan-penangkapan-penyu-hijau-ilegal-di-desa-waduwalla
+                date:
+                  type: string
+                  description: Date of the reported news with valid yyyy-mm-dd format (optional)
+                  example: "2020-11-05"
+                isTrained:
+                  type: boolean
+                  description: Whether the row has been trained or not
+                  example: false
+                label:
+                  type: string
+                  description: Label of the news (penyelundupan, penyitaan, perburuan, perdagangan, others)
+                  example: "perburuan"
+                organization:
+                  type: string
+                  description: Organization involved in the news (optional)
+                  example: BKKPN Kupang
+                site:
+                  type: string
+                  description: Site source of the news (optional)
+                  example: Borneo24.com - Berita Terbaru dan Terkini di Kalimantan
+                district:
+                  type: string
+                  description: District where the case happened (optional)
+                  example: SABU LIAE
+                regency:
+                  type: string
+                  description: Regency where the case happened (optional)
+                  example: KABUPATEN SABU RAIJUA
+                province:
+                  type: string
+                  description: Province where the case happened (optional)
+                  example: NUSA TENGGARA TIMUR
+                animals:
+                  type: array
+                  description: Animals involved in this case
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Name of the animal
+                        example: Penyu Hijau
+                      amount:
+                        type: integer
+                        description: Amount of the animal involved
+                        example: 3
+
+      responses:
+        '201':
+          description: Successfully post a news
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully add new site"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      news:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            description: ID represents a unique identifier of the news
+                            example: 8
+                          title:
+                            type: string
+                            description: Title of the news
+                            example: KKP Gagalkan Penangkapan Penyu Hijau Ilegal di Desa Waduwalla
+                          url:
+                            type: string
+                            description: URL of the news
+                            example: https://borneo24.com/headlines/kkp-gagalkan-penangkapan-penyu-hijau-ilegal-di-desa-waduwalla
+                          date:
+                            type: string
+                            description: Date of the reported news
+                            example: "2020-11-05"
+                          isTrained:
+                            type: boolean
+                            description: Whether the row has been trained or not
+                            example: false
+                          label:
+                            type: string
+                            description: Label of the news
+                            example: "perburuan"
+                          organization:
+                            type: object
+                            description: Organization involved in the news
+                            properties:
+                              id:
+                                type: integer
+                                description: ID represents a unique identifier of the organization
+                                example: 8
+                              name:
+                                type: string
+                                description: Name of the organization
+                                example: BKKPN Kupang
+                          site:
+                            type: object
+                            description: Site source of the news
+                            properties:
+                              id:
+                                type: integer
+                                description: ID represents a unique identifier of the website
+                                example: 4
+                              name:
+                                type: string
+                                description: Name of the website
+                                example: Borneo24.com - Berita Terbaru dan Terkini di Kalimantan
+                          animals:
+                            type: array
+                            description: Animals involved in this case
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  description: ID represents a unique identifier of the animal
+                                  example: 7
+                                name:
+                                  type: string
+                                  description: Name of the animal
+                                  example: Penyu Hijau
+                                amount:
+                                  type: integer
+                                  description: Amount of the animal involved
+                                  example: 3
+                          province:
+                            type: object
+                            description: Province where the case happened (nullable)
+                            properties:
+                              id:
+                                type: integer
+                                description: ID represents a unique identifier of the province
+                                example: 54
+                              name:
+                                type: string
+                                description: Name of the province
+                                example: NUSA TENGGARA TIMUR
+                          regency:
+                            type: object
+                            description: Regency where the case happened (nullable)
+                            properties:
+                              id:
+                                type: integer
+                                description: ID represents a unique identifier of the regency
+                                example: 5320
+                              name:
+                                type: string
+                                description: Name of the regency
+                                example: KABUPATEN SABU RAIJUA
+                          district:
+                            type: object
+                            description: District where the case happened (nullable)
+                            properties:
+                              id:
+                                type: integer
+                                description: ID represents a unique identifier of the district
+                                example: 5320030
+                              name:
+                                type: string
+                                description: Name of the district
+                                example: SABU LIAE
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "The given data was invalid."
+                  errors:
+                    type: object
+                    description: List of error fields
+                    properties:
+                      title:
+                        type: array
+                        description: List of errors in title field
+                        items:
+                          type: string
+                        example: [
+                          "The title field is required.",
+                        ]
+                      url:
+                        type: array
+                        description: List of errors in url field
+                        items:
+                          type: string
+                        example: [
+                          "The url field is required.",
+                          "The url must be a valid URL."
+                        ]
+                      date:
+                        type: array
+                        description: List of errors in date field
+                        items:
+                          type: string
+                        example: [
+                          "The date is not a valid date."
+                        ]
+                      isTrained:
+                        type: array
+                        description: List of errors in isTrained field
+                        items:
+                          type: string
+                        example: [
+                          "The isTrained field is required.",
+                        ]
+                      label:
+                        type: array
+                        description: List of errors in label field
+                        items:
+                          type: string
+                        example: [
+                          "The label field is required.",
+                          "The selected label is invalid."
+                        ]
+                      animals:
+                        type: array
+                        description: List of errors in animals field
+                        items:
+                          type: string
+                        example: [
+                          "The animals field is required."
+                        ]
+                      district:
+                        type: array
+                        description: District must be exist if regency and province not exist
+                        items:
+                          type: string
+                        example: [
+                          "The district field is required when none of regency / province are present."
+                        ]
+                      regency:
+                        type: array
+                        description: Regency must be exist if district and province not exist
+                        items:
+                          type: string
+                        example: [
+                          "The regency field is required when none of district / province are present."
+                        ]
+                      province:
+                        type: array
+                        description: Province must be exist if district and regency not exist
+                        items:
+                          type: string
+                        example: [
+                          "The province field is required when none of regency / district are present."
+                        ]
+
+
+        '401':
+          description: Unauthorized user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
 
 components:
   schemas:

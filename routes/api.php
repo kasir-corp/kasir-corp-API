@@ -38,4 +38,5 @@ Route::group(["prefix" => "general", "middleware" => "apikey"], function() {
     Route::post('/sites', [SiteController::class, 'store']);
 
     Route::get('/news', [NewsController::class, 'getAllNews']);
+    Route::post('/news', [NewsController::class, 'store']);
 });
