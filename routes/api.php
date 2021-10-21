@@ -5,6 +5,7 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\SiteController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,4 +40,6 @@ Route::group(["prefix" => "general", "middleware" => "apikey"], function() {
 
     Route::get('/news', [NewsController::class, 'getAllNews']);
     Route::post('/news', [NewsController::class, 'store']);
+
+    Route::get('/keywords', [UserController::class, 'getKeywords']);
 });

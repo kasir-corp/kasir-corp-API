@@ -1074,8 +1074,50 @@ paths:
                         example: [
                           "The province field is required when none of regency / district are present."
                         ]
+        '401':
+          description: Unauthorized user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
 
-
+  '/api/general/keywords':
+    get:
+      tags:
+        - Users
+      description: Get all keywords
+      parameters:
+        - name: api_key
+          in: query
+          required: true
+          description: API key provided by Farrel Anshary
+          schema:
+            type: string
+          example: asdasd
+      summary: Get all keywords
+      responses:
+        '200':
+          description: Successfully get keywords
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Returned data from server
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully get news"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      keywords:
+                        type: array
+                        description: Keywords data
+                        items:
+                          type: string
+                        example: ['perburuan penyu', 'penangkapan harimau']
         '401':
           description: Unauthorized user
           content:
