@@ -15,7 +15,7 @@ class News extends Model
 
     public function animals()
     {
-        return $this->belongsToMany(Animal::class, 'animal_news', 'news_id', 'animal_id');
+        return $this->belongsToMany(Animal::class, 'animal_news', 'news_id', 'animal_id')->withPivot('amount');
     }
 
     public function organization()

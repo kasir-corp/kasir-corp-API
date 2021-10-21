@@ -727,6 +727,10 @@ paths:
                                     type: string
                                     description: Name of the animal
                                     example: Penyu Lekang
+                                  amount:
+                                    type: integer
+                                    description: Amount of the animal involved
+                                    example: 1
                             province:
                               type: object
                               description: Province where the case happened (nullable)

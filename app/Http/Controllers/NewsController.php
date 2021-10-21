@@ -18,13 +18,21 @@ class NewsController extends Controller
     public function getAllNews(Request $request)
     {
         $news = Cache::remember('news', 3600, function() {
-            return News::with('organization')
+            $news = News::with('organization')
                 ->with('site')
                 ->with('animals')
                 ->with('province')
                 ->with('regency')
                 ->with('district')
                 ->get();
+
+            foreach ($news as $singleNews) {
+                foreach ($singleNews->animals as $animal) {
+                    $animal->amount = $animal->pivot->amount;
+                }
+            }
+
+            return $news;
         });
 
         return ResponseHelper::response("Successfully get all news", 200, ['news' => $news]);
