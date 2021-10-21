@@ -11,10 +11,11 @@ class News extends Model
 
     protected $table = "news";
     protected $fillable = ["id", "title", "url", "date", "organization_id", "site_id", "district_id", "regency_id", "province_id", "isTrained", "label"];
+    protected $hidden = ['pivot', 'organization_id', 'site_id', 'district_id', 'regency_id', 'province_id', 'created_at', 'updated_at'];
 
     public function animals()
     {
-        return $this->belongsToMany(Animal::class, 'animal_news', 'animal_id', 'news_id');
+        return $this->belongsToMany(Animal::class, 'animal_news', 'news_id', 'animal_id');
     }
 
     public function organization()
@@ -25,5 +26,20 @@ class News extends Model
     public function site()
     {
         return $this->belongsTo(Site::class);
+    }
+
+    public function province()
+    {
+        return $this->belongsTo(Province::class);
+    }
+
+    public function district()
+    {
+        return $this->belongsTo(District::class);
+    }
+
+    public function regency()
+    {
+        return $this->belongsTo(Regency::class);
     }
 }

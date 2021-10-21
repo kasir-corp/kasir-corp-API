@@ -11,6 +11,7 @@ class Organization extends Model
 
     protected $table = "organizations";
     protected $fillable = ["id", "name"];
+    protected $hidden = ['created_at', 'updated_at'];
 
     public function news()
     {

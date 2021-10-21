@@ -11,6 +11,7 @@ class Regency extends Model
 
     protected $table = "regencies";
     protected $fillable = ["id", "name", "province_id"];
+    protected $hidden = ['province_id', 'created_at', 'updated_at'];
 
     public function districts()
     {

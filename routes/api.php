@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnimalController;
+use App\Http\Controllers\NewsController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\SiteController;
@@ -35,4 +36,6 @@ Route::group(["prefix" => "general", "middleware" => "apikey"], function() {
 
     Route::get('/sites', [SiteController::class, 'getAllSites']);
     Route::post('/sites', [SiteController::class, 'store']);
+
+    Route::get('/news', [NewsController::class, 'getAllNews']);
 });

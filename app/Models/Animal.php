@@ -11,6 +11,7 @@ class Animal extends Model
 
     protected $table = "animals";
     protected $fillable = ["id", "name"];
+    protected $hidden = ['pivot', 'created_at', 'updated_at'];
 
     public function news()
     {

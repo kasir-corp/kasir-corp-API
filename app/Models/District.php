@@ -11,4 +11,5 @@ class District extends Model
 
     protected $table = "districts";
     protected $fillable = ["id", "name", "regency_id"];
+    protected $hidden = ['regency_id', 'created_at', 'updated_at'];
 }

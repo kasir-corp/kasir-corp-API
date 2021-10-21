@@ -11,6 +11,7 @@ class Site extends Model
 
     protected $table = "sites";
     protected $fillable = ["id", "name"];
+    protected $hidden = ['created_at', 'updated_at'];
 
     public function news()
     {

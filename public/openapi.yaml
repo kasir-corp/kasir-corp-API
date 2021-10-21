@@ -355,7 +355,6 @@ paths:
                         type: array
                         description: List of errors in one field
                         items:
-                          type: name
                           example: The name field is required.
 
   '/api/general/organizations':
@@ -492,7 +491,6 @@ paths:
                         type: array
                         description: List of errors in one field
                         items:
-                          type: name
                           example: The name field is required.
 
   '/api/general/sites':
@@ -545,7 +543,7 @@ paths:
                             name:
                               type: string
                               description: Name of the website
-                              example: IAR
+                              example: detiknews
         '401':
           description: Unauthorized user
           content:
@@ -629,8 +627,149 @@ paths:
                         type: array
                         description: List of errors in one field
                         items:
-                          type: name
                           example: The name field is required.
+
+  '/api/general/news':
+    get:
+      tags:
+        - News
+      description: Get all news
+      parameters:
+        - name: api_key
+          in: query
+          required: true
+          description: API key provided by Farrel Anshary
+          schema:
+            type: string
+          example: asdasd
+      summary: Get all news
+      responses:
+        '200':
+          description: Successfully get news
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully get news"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      news:
+                        type: array
+                        description: News data
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: ID represents a unique identifier of the news
+                              example: 1
+                            title:
+                              type: string
+                              description: Title of the news
+                              example: Bunuh-Cincang Penyu Langka Dilindungi, 7 Nelayan Gunungkidul Ditangkap
+                            url:
+                              type: string
+                              description: URL of the news
+                              example: https://news.detik.com/berita-jawa-tengah/d-5541942/bunuh-cincang-penyu-langka-dilindungi-7-nelayan-gunungkidul-ditangkap
+                            date:
+                              type: string
+                              description: Date of the reported news
+                              example: "2021-04-22"
+                            isTrained:
+                              type: boolean
+                              description: Whether the row has been trained or not
+                              example: true
+                            label:
+                              type: string
+                              description: Label of the news
+                              example: "Perburuan"
+                            organization:
+                              type: object
+                              description: Organization involved in the news
+                              properties:
+                                id:
+                                  type: integer
+                                  description: ID represents a unique identifier of the organization
+                                  example: 6
+                                name:
+                                  type: string
+                                  description: Name of the organization
+                                  example: BKSDA DIY
+                            site:
+                              type: object
+                              description: Site source of the news
+                              properties:
+                                id:
+                                  type: integer
+                                  description: ID represents a unique identifier of the website
+                                  example: 2
+                                name:
+                                  type: string
+                                  description: Name of the website
+                                  example: detiknews
+                            animals:
+                              type: array
+                              description: Animals involved in this case
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                    description: ID represents a unique identifier of the animal
+                                    example: 6
+                                  name:
+                                    type: string
+                                    description: Name of the animal
+                                    example: Penyu Lekang
+                            province:
+                              type: object
+                              description: Province where the case happened (nullable)
+                              properties:
+                                id:
+                                  type: integer
+                                  description: ID represents a unique identifier of the province
+                                  example: 34
+                                name:
+                                  type: string
+                                  description: Name of the province
+                                  example: "DI YOGYAKARTA"
+                            regency:
+                              type: object
+                              description: Regency where the case happened (nullable)
+                              properties:
+                                id:
+                                  type: integer
+                                  description: ID represents a unique identifier of the regency
+                                  example: 3403
+                                name:
+                                  type: string
+                                  description: Name of the regency
+                                  example: KABUPATEN GUNUNG KIDUL
+                            district:
+                              type: object
+                              description: District where the case happened (nullable)
+                              properties:
+                                id:
+                                  type: integer
+                                  description: ID represents a unique identifier of the district
+                                  example: 3403040
+                                name:
+                                  type: string
+                                  description: Name of the district
+                                  example: TEPUS
+
+        '401':
+          description: Unauthorized user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
 
 components:
   schemas:
