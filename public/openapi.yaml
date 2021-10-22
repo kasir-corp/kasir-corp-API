@@ -22,7 +22,7 @@ paths:
           example: asdasd
       responses:
         '200':
-          description: All provinces
+          description: OK
           content:
             application/json:
               schema:
@@ -51,7 +51,7 @@ paths:
                               description: Name of the province
                               example: "ACEH"
         '401':
-          description: Unauthorized user
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -79,7 +79,7 @@ paths:
           example: asdasd
       responses:
         '200':
-          description: All regencies in this province
+          description: OK
           content:
             application/json:
               schema:
@@ -121,7 +121,7 @@ paths:
                                   example: KABUPATEN BOGOR
 
         '404':
-          description: Not found
+          description: Not Found
           content:
             application/json:
               schema:
@@ -132,7 +132,7 @@ paths:
                     description: Love letter from server ❤️
                     example: "No query results for model [App\\Models\\Province] 322"
         '401':
-          description: Unauthorized user
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -161,7 +161,7 @@ paths:
           example: asdasd
       responses:
         '200':
-          description: All districts in this regency
+          description: OK
           content:
             application/json:
               schema:
@@ -203,7 +203,7 @@ paths:
                                   example: BANDUNG KULON
 
         '404':
-          description: Not found
+          description: Not Found
           content:
             application/json:
               schema:
@@ -214,7 +214,7 @@ paths:
                     description: Love letter from server ❤️
                     example: "No query results for model [App\\Models\\Regency] 32734"
         '401':
-          description: Unauthorized user
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -244,7 +244,7 @@ paths:
       summary: Get / search all animals
       responses:
         '200':
-          description: Successfully get animals
+          description: OK
           content:
             application/json:
               schema:
@@ -273,7 +273,7 @@ paths:
                               description: Name of the animal
                               example: Harimau Sumatera
         '401':
-          description: Unauthorized user
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -303,7 +303,7 @@ paths:
                   example: Jackie Leonardy
       responses:
         '201':
-          description: Successfully create new animal
+          description: Created
           content:
             application/json:
               schema:
@@ -330,14 +330,14 @@ paths:
                             description: Name of the animal
                             example: Harimau Sumatera
         '401':
-          description: Unauthorized user
+          description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/inline_response_401'
 
         '422':
-          description: Unprocessable entity
+          description: Unprocessable Entity
           content:
             application/json:
               schema:
@@ -384,7 +384,7 @@ paths:
       summary: Get / search all organizations
       responses:
         '200':
-          description: Successfully get organizations
+          description: OK
           content:
             application/json:
               schema:
@@ -413,7 +413,7 @@ paths:
                               description: Name of the organization
                               example: IAR
         '401':
-          description: Unauthorized user
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -443,7 +443,7 @@ paths:
                   example: WWF
       responses:
         '201':
-          description: Successfully create new organization
+          description: Created
           content:
             application/json:
               schema:
@@ -470,14 +470,14 @@ paths:
                             description: Name of the organization
                             example: WWF
         '401':
-          description: Unauthorized user
+          description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/inline_response_401'
 
         '422':
-          description: Unprocessable entity
+          description: Unprocessable Entity
           content:
             application/json:
               schema:
@@ -524,7 +524,7 @@ paths:
       summary: Get / search all sites
       responses:
         '200':
-          description: Successfully get sites
+          description: OK
           content:
             application/json:
               schema:
@@ -553,7 +553,7 @@ paths:
                               description: Name of the website
                               example: detiknews
         '401':
-          description: Unauthorized user
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -583,7 +583,7 @@ paths:
                   example: detik.com
       responses:
         '201':
-          description: Successfully create new site
+          description: Created
           content:
             application/json:
               schema:
@@ -610,14 +610,14 @@ paths:
                             description: Name of the website
                             example: detik.com
         '401':
-          description: Unauthorized user
+          description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/inline_response_401'
 
         '422':
-          description: Unprocessable entity
+          description: Unprocessable Entity
           content:
             application/json:
               schema:
@@ -657,7 +657,7 @@ paths:
       summary: Get all news
       responses:
         '200':
-          description: Successfully get news
+          description: OK
           content:
             application/json:
               schema:
@@ -781,7 +781,7 @@ paths:
                                   example: TEPUS
 
         '401':
-          description: Unauthorized user
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -866,7 +866,7 @@ paths:
 
       responses:
         '201':
-          description: Successfully post a news
+          description: Created
           content:
             application/json:
               schema:
@@ -986,7 +986,7 @@ paths:
                                 description: Name of the district
                                 example: SABU LIAE
         '422':
-          description: Unprocessable entity
+          description: Unprocessable Entity
           content:
             application/json:
               schema:
@@ -1075,7 +1075,7 @@ paths:
                           "The province field is required when none of regency / district are present."
                         ]
         '401':
-          description: Unauthorized user
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -1097,7 +1097,7 @@ paths:
       summary: Get all keywords
       responses:
         '200':
-          description: Successfully get keywords
+          description: OK
           content:
             application/json:
               schema:
@@ -1119,7 +1119,7 @@ paths:
                           type: string
                         example: ['perburuan penyu', 'penangkapan harimau']
         '401':
-          description: Unauthorized user
+          description: Unauthorized
           content:
             application/json:
               schema:
