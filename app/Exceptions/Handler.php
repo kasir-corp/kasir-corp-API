@@ -2,6 +2,8 @@
 
 namespace App\Exceptions;
 
+use App\Helpers\ResponseHelper;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -36,6 +38,10 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+
+        $this->renderable(function (AuthenticationException $e, $request) {
+            return ResponseHelper::response("Unauthorized", 401);
         });
     }
 }

@@ -1384,6 +1384,13 @@ paths:
                     description: Love letter from server ❤️
                     example: "Successfully logged out"
 
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
 
 components:
   schemas:
