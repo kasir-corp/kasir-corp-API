@@ -1125,6 +1125,265 @@ paths:
               schema:
                 $ref: '#/components/schemas/inline_response_401'
 
+  '/api/auth/register':
+    post:
+      tags:
+        - Authentication
+      description: Ya buat register lah apa lagi
+      summary: Register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - api_key
+                - name
+                - email
+                - password
+                - password_confirmation
+              properties:
+                api_key:
+                  type: string
+                  description: API key provided by Farrel Anshary
+                  example: asdasd
+                name:
+                  type: string
+                  description: Name of the user
+                  example: Farrel Najib Anshary
+                email:
+                  type: string
+                  description: User's email
+                  example: farrel.anshary@binus.ac.id
+                password:
+                  type: string
+                  description: User's password
+                  example: admin123
+                password_confirmation:
+                  type: string
+                  description: User's password confirmation
+                  example: admin123
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully register new user"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      token:
+                        type: string
+                        description: Token string used for authentication
+                        example: 2|Hvu54arWsoLzjciFOBvrASbYyanFKLB2B9R9tAQV
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            description: ID represents a unique identifier of the user
+                            example: 1
+                          name:
+                            type: string
+                            description: Name of the user
+                            example: Farrel Najib Anshary
+                          email:
+                            type: string
+                            description: User's email
+                            example: farrel.anshary@binus.ac.id
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "The given data was invalid."
+                  errors:
+                    type: object
+                    description: List of error fields
+                    properties:
+                      name:
+                        type: array
+                        description: List of errors in name field
+                        items:
+                          type: string
+                        example: [
+                          "The name field is required.",
+                        ]
+                      email:
+                        type: array
+                        description: List of errors in email field
+                        items:
+                          type: string
+                        example: [
+                          "The email field is required.",
+                          "The email must be a valid email address.",
+                          "The email has already been taken."
+                        ]
+                      password:
+                        type: array
+                        description: List of errors in password field
+                        items:
+                          type: string
+                        example: [
+                          "The password field is required.",
+                          "The password confirmation does not match."
+                        ]
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
+  '/api/auth/login':
+    post:
+      tags:
+        - Authentication
+      summary: Login
+      description: Ya buat login lah koplak
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - api_key
+                - email
+                - password
+              properties:
+                api_key:
+                  type: string
+                  description: API key provided by Farrel Anshary
+                  example: asdasd
+                email:
+                  type: string
+                  description: User's email
+                  example: farrel.anshary@binus.ac.id
+                password:
+                  type: string
+                  description: User's password
+                  example: admin123
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully logged in"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      token:
+                        type: string
+                        description: Token string used for authentication
+                        example: 2|Hvu54arWsoLzjciFOBvrASbYyanFKLB2B9R9tAQV
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "The given data was invalid."
+                  errors:
+                    type: object
+                    description: List of error fields
+                    properties:
+                      email:
+                        type: array
+                        description: List of errors in email field
+                        items:
+                          type: string
+                        example: [
+                          "The email field is required."
+                        ]
+                      password:
+                        type: array
+                        description: List of errors in password field
+                        items:
+                          type: string
+                        example: [
+                          "The password field is required."
+                        ]
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: Invalid email or password
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
+  '/api/auth/logout':
+    post:
+      tags:
+        - Authentication
+      summary: Logout
+      description: Gapaham lagi gw kalo lu gak ngerti logout buat apaan
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            format: bearer
+            example: Bearer 10|5Ua13XmskD3WS9MGFHy2IqMOqT6luSm09JBsSt3T
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - api_key
+              properties:
+                api_key:
+                  type: string
+                  description: API key provided by Farrel Anshary
+                  example: asdasd
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully logged out"
+
 
 components:
   schemas:

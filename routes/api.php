@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnimalController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\RegionController;
@@ -24,22 +25,33 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(["prefix" => "general", "middleware" => "apikey"], function() {
-    Route::get("/provinces", [RegionController::class, 'getProvinces']);
-    Route::get("/regencies/{provinceId}", [RegionController::class, 'getRegencies']);
-    Route::get("/districts/{regencyId}", [RegionController::class, 'getDistricts']);
+Route::group(["middleware" => "apikey"], function() {
+    Route::group(["prefix" => "general"], function() {
+        Route::get("/provinces", [RegionController::class, 'getProvinces']);
+        Route::get("/regencies/{provinceId}", [RegionController::class, 'getRegencies']);
+        Route::get("/districts/{regencyId}", [RegionController::class, 'getDistricts']);
 
-    Route::get('/animals', [AnimalController::class, 'getAllAnimals']);
-    Route::post('/animals', [AnimalController::class, 'store']);
+        Route::get('/animals', [AnimalController::class, 'getAllAnimals']);
+        Route::post('/animals', [AnimalController::class, 'store']);
 
-    Route::get('/organizations', [OrganizationController::class, 'getAllOrganizations']);
-    Route::post('/organizations', [OrganizationController::class, 'store']);
+        Route::get('/organizations', [OrganizationController::class, 'getAllOrganizations']);
+        Route::post('/organizations', [OrganizationController::class, 'store']);
 
-    Route::get('/sites', [SiteController::class, 'getAllSites']);
-    Route::post('/sites', [SiteController::class, 'store']);
+        Route::get('/sites', [SiteController::class, 'getAllSites']);
+        Route::post('/sites', [SiteController::class, 'store']);
 
-    Route::get('/news', [NewsController::class, 'getAllNews']);
-    Route::post('/news', [NewsController::class, 'store']);
+        Route::get('/news', [NewsController::class, 'getAllNews']);
+        Route::post('/news', [NewsController::class, 'store']);
 
-    Route::get('/keywords', [UserController::class, 'getKeywords']);
+        Route::get('/keywords', [UserController::class, 'getKeywords']);
+    });
+
+    Route::group(["prefix" => "auth"], function() {
+        Route::post('/register', [AuthController::class, 'register']);
+        Route::post('/login', [AuthController::class, 'login']);
+
+        Route::group(['middleware' => 'auth:sanctum'], function() {
+            Route::post('/logout', [AuthController::class, 'logout']);
+        });
+    });
 });
