@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewsInserted;
 use App\Helpers\ResponseHelper;
 use App\Models\Animal;
 use App\Models\District;
@@ -110,19 +111,22 @@ class NewsController extends Controller
                     $news->animals()->attach($newAnimal, ['amount' => $animal['amount']]);
                 }
 
+                $allNews = $this->fetchNews();
+
                 Cache::put('organizations', Organization::all(['id', 'name']));
                 Cache::put('sites', Site::all(['id', 'name']));
                 Cache::put('animals', Animal::all(['id', 'name']));
-                Cache::put('news', $this->fetchNews());
+                Cache::put('news', $allNews);
 
                 $news->load(['organization', 'site', 'animals', 'district', 'regency', 'province']);
 
+                event(new NewsInserted(['news' => $allNews]));
                 return ResponseHelper::response("Successfully store news", 201, ['news' => $news]);
             } catch (Exception $e) {
                 return ResponseHelper::response($e->getMessage(), 500);
             }
         });
 
-        return $news;
+        return $result;
     }
 }
