@@ -50,6 +50,20 @@ paths:
                               type: string
                               description: Name of the province
                               example: "ACEH"
+                            alt_name:
+                              type: string
+                              description: Alternative name of the province
+                              example: "ACEH"
+                            latitude:
+                              type: number
+                              format: double
+                              description: Latitude of the province
+                              example: 4.36855
+                            longitude:
+                              type: number
+                              format: double
+                              description: Longitude of the province
+                              example: 97.0253
         '401':
           description: Unauthorized
           content:
@@ -105,6 +119,20 @@ paths:
                             type: string
                             description: Name of the province
                             example: JAWA BARAT
+                          alt_name:
+                              type: string
+                              description: Alternative name of the province
+                              example: JAWA BARAT
+                          latitude:
+                            type: number
+                            format: double
+                            description: Latitude of the province
+                            example: -6.88917
+                          longitude:
+                            type: number
+                            format: double
+                            description: Longitude of the province
+                            example: 107.64047
                           regencies:
                             type: array
                             description: Regencies in specified province
@@ -755,6 +783,20 @@ paths:
                                   type: string
                                   description: Name of the province
                                   example: "DI YOGYAKARTA"
+                                alt_name:
+                                  type: string
+                                  description: Alternative name of the province
+                                  example: "DI YOGYAKARTA"
+                                latitude:
+                                  type: number
+                                  format: double
+                                  description: Latitude of the province
+                                  example: 7.7956
+                                longitude:
+                                  type: number
+                                  format: double
+                                  description: Longitude of the province
+                                  example: 110.3695
                             regency:
                               type: object
                               description: Regency where the case happened (nullable)
@@ -961,6 +1003,20 @@ paths:
                                 type: string
                                 description: Name of the province
                                 example: NUSA TENGGARA TIMUR
+                              alt_name:
+                                type: string
+                                description: Alternative name of the province
+                                example: "DI YOGYAKARTA"
+                              latitude:
+                                type: number
+                                format: double
+                                description: Latitude of the province
+                                example: -8.56568
+                              longitude:
+                                type: number
+                                format: double
+                                description: Longitude of the province
+                                example: 120.69786
                           regency:
                             type: object
                             description: Regency where the case happened (nullable)

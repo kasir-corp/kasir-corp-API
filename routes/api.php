@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\TestPusher;
 use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NewsController;
@@ -23,6 +24,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::get('/test-pusher', function() {
+    event(new TestPusher());
+    return "Event triggered";
 });
 
 Route::group(["middleware" => "apikey"], function() {
