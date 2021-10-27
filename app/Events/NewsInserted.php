@@ -35,6 +35,6 @@ class NewsInserted implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('news-all');
+        return 'news-inserted';
     }
 }
