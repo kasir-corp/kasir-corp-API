@@ -57,35 +57,4 @@ class RegionController extends Controller
             ['province' => $province]
         );
     }
-
-    /**
-     * Get all districts from a regency
-     *
-     * @param  int $regencyId
-     * @return Illuminate\Http\Response;
-     */
-    public function getDistricts(int $regencyId)
-    {
-        $regency = Cache::rememberForever("districts_$regencyId", function() use ($regencyId) {
-            $regency = Regency::with('districts:id,name,regency_id')->find($regencyId, ['id', 'name']);
-
-            if ($regency) {
-                foreach ($regency->districts as $district) {
-                    unset($district->regency_id);
-                }
-            }
-
-            return $regency;
-        });
-
-        if ($regency == null) {
-            return ResponseHelper::response("Not found", 404);
-        }
-
-        return ResponseHelper::response(
-            "Successfully get all districts in $regency->name",
-            200,
-            ['regency' => $regency]
-        );
-    }
 }
