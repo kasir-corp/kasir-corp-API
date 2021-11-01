@@ -16,6 +16,9 @@ class CreatePlacesTable extends Migration
         Schema::create('provinces', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->double('longitude');
+            $table->double('latitude');
+            $table->string('alt_name');
             $table->timestamps();
         });
 
@@ -30,17 +33,6 @@ class CreatePlacesTable extends Migration
             $table->foreign('province_id')->references('id')->on('provinces');
         });
 
-        Schema::create('districts', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->unsignedBigInteger('regency_id');
-            $table->timestamps();
-        });
-
-        Schema::table('districts', function (Blueprint $table) {
-            $table->foreign('regency_id')->references('id')->on('regencies');
-        });
-
     }
 
     /**
@@ -50,7 +42,6 @@ class CreatePlacesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('districts');
         Schema::dropIfExists('regencies');
         Schema::dropIfExists('provinces');
     }

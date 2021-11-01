@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAnimalNewsTable extends Migration
+class CreateEditedTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,19 @@ class CreateAnimalNewsTable extends Migration
      */
     public function up()
     {
-        Schema::create('animal_news', function (Blueprint $table) {
+        Schema::create('edited', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('animal_id');
+            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('news_id');
-            $table->integer('amount');
+            $table->date('date');
+            $table->unsignedBigInteger('site_id');
             $table->timestamps();
         });
 
-        Schema::table('animal_news', function (Blueprint $table) {
-            $table->foreign('animal_id')->references('id')->on('animals');
+        Schema::table('edited', function (Blueprint $table) {
+            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('news_id')->references('id')->on('news');
+            $table->foreign('site_id')->references('id')->on('sites');
         });
     }
 
@@ -34,6 +36,6 @@ class CreateAnimalNewsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('animal_news');
+        Schema::dropIfExists('edited');
     }
 }

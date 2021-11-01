@@ -37,6 +37,6 @@ class TestPusher implements ShouldBroadcast
 
     public function broadcastAs()
     {
-        return 'status-liked';
+        return 'kasir-work';
     }
 }

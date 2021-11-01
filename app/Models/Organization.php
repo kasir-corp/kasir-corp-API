@@ -15,6 +15,6 @@ class Organization extends Model
 
     public function news()
     {
-        return $this->hasMany(News::class);
+        return $this->belongsToMany(News::class, 'news_organization', 'organization_id', 'news_id');
     }
 }

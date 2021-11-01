@@ -18,22 +18,15 @@ class CreateNewsTable extends Migration
             $table->string('title');
             $table->string('url');
             $table->date('date')->nullable();
-            $table->unsignedBigInteger('organization_id')->nullable();
+            $table->date('news_date')->nullable();
             $table->unsignedBigInteger('site_id')->nullable();
-            $table->unsignedBigInteger('district_id')->nullable();
-            $table->unsignedBigInteger('regency_id')->nullable();
-            $table->unsignedBigInteger('province_id')->nullable();
-            $table->boolean('isTrained');
+            $table->boolean('is_trained');
             $table->enum('label', ['penyelundupan', 'penyitaan', 'perburuan', 'perdagangan', 'others']);
             $table->timestamps();
         });
 
         Schema::table('news', function (Blueprint $table) {
-            $table->foreign('organization_id')->references('id')->on('organizations');
             $table->foreign('site_id')->references('id')->on('sites');
-            $table->foreign('district_id')->references('id')->on('districts');
-            $table->foreign('regency_id')->references('id')->on('regencies');
-            $table->foreign('province_id')->references('id')->on('provinces');
         });
     }
 

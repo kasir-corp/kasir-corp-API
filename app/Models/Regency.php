@@ -13,13 +13,13 @@ class Regency extends Model
     protected $fillable = ["id", "name", "province_id"];
     protected $hidden = ['province_id', 'created_at', 'updated_at'];
 
-    public function districts()
-    {
-        return $this->hasMany(District::class);
-    }
-
     public function province()
     {
         return $this->belongsTo(Province::class);
+    }
+
+    public function news()
+    {
+        return $this->belongsToMany(News::class, 'news_regency', 'regency_id', 'news_id');
     }
 }

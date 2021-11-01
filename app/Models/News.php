@@ -33,11 +33,6 @@ class News extends Model
         return $this->belongsTo(Province::class);
     }
 
-    public function district()
-    {
-        return $this->belongsTo(District::class);
-    }
-
     public function regency()
     {
         return $this->belongsTo(Regency::class);
