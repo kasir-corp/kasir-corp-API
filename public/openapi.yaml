@@ -600,14 +600,22 @@ paths:
           schema:
             type: string
           example: asdasd
-        - name: range
+        - name: start
           in: query
           required: true
-          description: Time range settings
+          description: Start date of the query
           schema:
             type: string
-            format: week, month, 3months, 6months, year
-          example: month
+            format: date
+          example: "2021-10-31"
+        - name: end
+          in: query
+          required: true
+          description: End date of the query
+          schema:
+            type: string
+            format: date
+          example: "2021-11-31"
         - name: query
           in: query
           required: false
@@ -652,9 +660,13 @@ paths:
                               example: https://news.detik.com/berita-jawa-tengah/d-5541942/bunuh-cincang-penyu-langka-dilindungi-7-nelayan-gunungkidul-ditangkap
                             date:
                               type: string
-                              description: Date of the reported news
+                              description: Date of the reported case
                               example: "2021-04-22"
-                            isTrained:
+                            news_date:
+                              type: string
+                              description: Date of the news
+                              example: "2021-04-22"
+                            is_trained:
                               type: boolean
                               description: Whether the row has been trained or not
                               example: true
@@ -662,18 +674,24 @@ paths:
                               type: string
                               description: Label of the news
                               example: "perburuan"
-                            organization:
-                              type: object
-                              description: Organization involved in the news
-                              properties:
-                                id:
-                                  type: integer
-                                  description: ID represents a unique identifier of the organization
-                                  example: 6
-                                name:
-                                  type: string
-                                  description: Name of the organization
-                                  example: BKSDA DIY
+                            organizations:
+                              type: array
+                              description: Organizations involved in the news
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                    description: ID represents a unique identifier of the organization
+                                  name:
+                                    type: string
+                                    description: Name of the organization
+                              example: [
+                                {
+                                  "id": 6,
+                                  "name": "BKSDA DIY"
+                                }
+                              ]
                             site:
                               type: object
                               description: Site source of the news
@@ -704,56 +722,47 @@ paths:
                                     type: integer
                                     description: Amount of the animal involved
                                     example: 1
-                            province:
-                              type: object
-                              description: Province where the case happened (nullable)
-                              properties:
-                                id:
-                                  type: integer
-                                  description: ID represents a unique identifier of the province
-                                  example: 34
-                                name:
-                                  type: string
-                                  description: Name of the province
-                                  example: "DI YOGYAKARTA"
-                                alt_name:
-                                  type: string
-                                  description: Alternative name of the province
-                                  example: "DI YOGYAKARTA"
-                                latitude:
-                                  type: number
-                                  format: double
-                                  description: Latitude of the province
-                                  example: 7.7956
-                                longitude:
-                                  type: number
-                                  format: double
-                                  description: Longitude of the province
-                                  example: 110.3695
-                            regency:
-                              type: object
-                              description: Regency where the case happened (nullable)
-                              properties:
-                                id:
-                                  type: integer
-                                  description: ID represents a unique identifier of the regency
-                                  example: 3403
-                                name:
-                                  type: string
-                                  description: Name of the regency
-                                  example: KABUPATEN GUNUNG KIDUL
-                            district:
-                              type: object
-                              description: District where the case happened (nullable)
-                              properties:
-                                id:
-                                  type: integer
-                                  description: ID represents a unique identifier of the district
-                                  example: 3403040
-                                name:
-                                  type: string
-                                  description: Name of the district
-                                  example: TEPUS
+                            regencies:
+                              type: array
+                              description: Regencies where the case happened (nullable)
+                              items:
+                                type: object
+                                description: Regency where the case happened (nullable)
+                                properties:
+                                  id:
+                                    type: integer
+                                    description: ID represents a unique identifier of the regency
+                                    example: 3403
+                                  name:
+                                    type: string
+                                    description: Name of the regency
+                                    example: KABUPATEN GUNUNG KIDUL
+                                  province:
+                                    type: object
+                                    description: Province where the case happened (nullable)
+                                    properties:
+                                      id:
+                                        type: integer
+                                        description: ID represents a unique identifier of the province
+                                        example: 34
+                                      name:
+                                        type: string
+                                        description: Name of the province
+                                        example: "DI YOGYAKARTA"
+                                      alt_name:
+                                        type: string
+                                        description: Alternative name of the province
+                                        example: "DI YOGYAKARTA"
+                                      latitude:
+                                        type: number
+                                        format: double
+                                        description: Latitude of the province
+                                        example: 7.7956
+                                      longitude:
+                                        type: number
+                                        format: double
+                                        description: Longitude of the province
+                                        example: 110.3695
 
         '422':
           description: Unprocessable Entity
@@ -770,13 +779,23 @@ paths:
                     type: object
                     description: List of error fields
                     properties:
-                      range:
+                      start:
                         type: array
-                        description: List of errors in range field
+                        description: List of errors in start field
                         items:
                           type: string
                         example: [
-                          "The selected range is invalid."
+                          "The start field is required.",
+                          "The start is not a valid date."
+                        ]
+                      end:
+                        type: array
+                        description: List of errors in end field
+                        items:
+                          type: string
+                        example: [
+                          "The end field is required.",
+                          "The end is not a valid date."
                         ]
 
         '401':

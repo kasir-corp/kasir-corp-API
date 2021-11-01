@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\NewsInserted;
 use App\Helpers\ResponseHelper;
 use App\Models\Animal;
-use App\Models\District;
 use App\Models\News;
 use App\Models\Organization;
-use App\Models\Province;
 use App\Models\Regency;
 use App\Models\Site;
 use Exception;
@@ -27,26 +24,15 @@ class NewsController extends Controller
     public function getAllNews(Request $request)
     {
         $request->validate([
-            'range' => 'required|in:month,3months,6months,year,week',
+            'start' => 'required|date',
+            'end' => 'required|date'
         ]);
 
-        $end = date("Y-m-d");
-        $start = null;
-
-        if ($request->range == "month") {
-            $start = date("Y-m-d", strtotime("-1 month"));
-        } else if ($request->range == "3months") {
-            $start = date("Y-m-d", strtotime("-3 month"));
-        } else if ($request->range == "6months") {
-            $start = date("Y-m-d", strtotime("-6 month"));
-        } else if ($request->range == "year") {
-            $start = date("Y-m-d", strtotime("-1 year"));
-        } else {
-            $start = date("Y-m-d", strtotime("-1 week"));
-        }
-
+        $start = $request->start;
+        $end = $request->end;
         $query = $request->get('query');
-        $news = Cache::tags(['news'])->remember("news.$request->range.$query", 300, function () use ($query, $start, $end) {
+
+        $news = Cache::tags(['news'])->remember("news.$start.$end.$query", 300, function () use ($query, $start, $end) {
             return $this->fetchNews($start, $end, $query);
         });
 
@@ -60,19 +46,13 @@ class NewsController extends Controller
      */
     private function fetchNews(string $start, string $end, $queryString)
     {
-        $news = News::with(['organization', 'site', 'animals', 'province', 'regency', 'district']);
+        $news = News::with(['organizations', 'site', 'animals', 'regencies']);
 
         if ($queryString != null) {
             $news->where(function($query) use ($queryString) {
                 $query->where('title', 'like', "%$queryString%")
                     ->orWhere('label', 'like', "%$queryString%")
-                    ->orWhereHas('province', function($query) use ($queryString) {
-                        return $query->where('name', 'like', "%$queryString%");
-                    })
-                    ->orWhereHas('regency', function($query) use ($queryString) {
-                        return $query->where('name', 'like', "%$queryString%");
-                    })
-                    ->orWhereHas('district', function($query) use ($queryString) {
+                    ->orWhereHas('regencies', function($query) use ($queryString) {
                         return $query->where('name', 'like', "%$queryString%");
                     })
                     ->orWhereHas('animals', function($query) use ($queryString) {
@@ -81,7 +61,7 @@ class NewsController extends Controller
                     ->orWhereHas('site', function($query) use ($queryString) {
                         return $query->where('name', 'like', "%$queryString%");
                     })
-                    ->orWhereHas('organization', function($query) use ($queryString) {
+                    ->orWhereHas('organizations', function($query) use ($queryString) {
                         return $query->where('name', 'like', "%$queryString%");
                     }
                 );
