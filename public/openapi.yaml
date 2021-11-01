@@ -820,7 +820,11 @@ paths:
                   type: string
                   description: Date of the reported news with valid yyyy-mm-dd format (optional)
                   example: "2020-11-05"
-                isTrained:
+                news_date:
+                  type: string
+                  description: Date of the news acquired from the scraper (optional)
+                  example: "1 week ago"
+                is_trained:
                   type: boolean
                   description: Whether the row has been trained or not
                   example: false
@@ -828,26 +832,25 @@ paths:
                   type: string
                   description: Label of the news (penyelundupan, penyitaan, perburuan, perdagangan, others)
                   example: "perburuan"
-                organization:
-                  type: string
-                  description: Organization involved in the news (optional)
-                  example: BKKPN Kupang
+                organizations:
+                  type: array
+                  description: Organizations involved in the news (optional)
+                  items:
+                    type: string
+                  example: [
+                    BKKPN Kupang,
+                    Dinas Kelautan dan Perikanan (DKP) Kabupaten Sabu Raijua
+                  ]
                 site:
                   type: string
                   description: Site source of the news (optional)
                   example: Borneo24.com - Berita Terbaru dan Terkini di Kalimantan
-                district:
-                  type: string
-                  description: District where the case happened (optional)
-                  example: SABU LIAE
-                regency:
-                  type: string
-                  description: Regency where the case happened (optional)
-                  example: KABUPATEN SABU RAIJUA
-                province:
-                  type: string
-                  description: Province where the case happened (optional)
-                  example: NUSA TENGGARA TIMUR
+                regencies:
+                  type: array
+                  description: Regencies where the case happened (optional)
+                  items:
+                    type: string
+                  example: [KABUPATEN SABU RAIJUA]
                 animals:
                   type: array
                   description: Animals involved in this case
@@ -898,7 +901,7 @@ paths:
                             type: string
                             description: Date of the reported news
                             example: "2020-11-05"
-                          isTrained:
+                          is_trained:
                             type: boolean
                             description: Whether the row has been trained or not
                             example: false
@@ -906,18 +909,28 @@ paths:
                             type: string
                             description: Label of the news
                             example: "perburuan"
-                          organization:
-                            type: object
-                            description: Organization involved in the news
-                            properties:
-                              id:
-                                type: integer
-                                description: ID represents a unique identifier of the organization
-                                example: 8
-                              name:
-                                type: string
-                                description: Name of the organization
-                                example: BKKPN Kupang
+                          organizations:
+                            type: array
+                            description: Organizations involved in the news
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  description: ID represents a unique identifier of the organization
+                                name:
+                                  type: string
+                                  description: Name of the organization
+                            example: [
+                              {
+                                "id": 2,
+                                "name": "BKKPN Kupang"
+                              },
+                              {
+                                "id": 3,
+                                "name": "Dinas Kelautan dan Perikanan (DKP) Kabupaten Sabu Raijua"
+                              }
+                            ]
                           site:
                             type: object
                             description: Site source of the news
@@ -948,56 +961,46 @@ paths:
                                   type: integer
                                   description: Amount of the animal involved
                                   example: 3
-                          province:
-                            type: object
-                            description: Province where the case happened (nullable)
-                            properties:
-                              id:
-                                type: integer
-                                description: ID represents a unique identifier of the province
-                                example: 54
-                              name:
-                                type: string
-                                description: Name of the province
-                                example: NUSA TENGGARA TIMUR
-                              alt_name:
-                                type: string
-                                description: Alternative name of the province
-                                example: "DI YOGYAKARTA"
-                              latitude:
-                                type: number
-                                format: double
-                                description: Latitude of the province
-                                example: -8.56568
-                              longitude:
-                                type: number
-                                format: double
-                                description: Longitude of the province
-                                example: 120.69786
-                          regency:
-                            type: object
-                            description: Regency where the case happened (nullable)
-                            properties:
-                              id:
-                                type: integer
-                                description: ID represents a unique identifier of the regency
-                                example: 5320
-                              name:
-                                type: string
-                                description: Name of the regency
-                                example: KABUPATEN SABU RAIJUA
-                          district:
-                            type: object
-                            description: District where the case happened (nullable)
-                            properties:
-                              id:
-                                type: integer
-                                description: ID represents a unique identifier of the district
-                                example: 5320030
-                              name:
-                                type: string
-                                description: Name of the district
-                                example: SABU LIAE
+                          regencies:
+                            type: array
+                            description: Regencies where the case happened (nullable)
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  description: ID represents a unique identifier of the regency
+                                  example: 5320
+                                name:
+                                  type: string
+                                  description: Name of the regency
+                                  example: KABUPATEN SABU RAIJUA
+                                province:
+                                  type: object
+                                  description: Province of the regency
+                                  properties:
+                                    id:
+                                      type: integer
+                                      description: ID represents a unique identifier of the province
+                                      example: 53
+                                    name:
+                                      type: string
+                                      description: Name of the province
+                                      example: NUSA TENGGARA TIMUR
+                                    longitude:
+                                      type: number
+                                      format: double
+                                      description: Longitude of the province
+                                      example: 120.69786
+                                    latitude:
+                                      type: number
+                                      format: double
+                                      description: Latitude of the province
+                                      example: -8.56568
+                                    alt_name:
+                                      type: string
+                                      description: Alternative name of the province
+                                      example: NUSA TENGGARA TIMUR
         '422':
           description: Unprocessable Entity
           content:
@@ -1028,7 +1031,8 @@ paths:
                           type: string
                         example: [
                           "The url field is required.",
-                          "The url must be a valid URL."
+                          "The url must be a valid URL.",
+                          "The url has already been taken."
                         ]
                       date:
                         type: array
@@ -1038,13 +1042,13 @@ paths:
                         example: [
                           "The date is not a valid date."
                         ]
-                      isTrained:
+                      is_trained:
                         type: array
-                        description: List of errors in isTrained field
+                        description: List of errors in is_trained field
                         items:
                           type: string
                         example: [
-                          "The isTrained field is required.",
+                          "The is_trained field is required.",
                         ]
                       label:
                         type: array
@@ -1063,29 +1067,13 @@ paths:
                         example: [
                           "The animals field is required."
                         ]
-                      district:
+                      regencies:
                         type: array
-                        description: District must be exist if regency and province not exist
+                        description: List of errors in regencies field
                         items:
                           type: string
                         example: [
-                          "The district field is required when none of regency / province are present."
-                        ]
-                      regency:
-                        type: array
-                        description: Regency must be exist if district and province not exist
-                        items:
-                          type: string
-                        example: [
-                          "The regency field is required when none of district / province are present."
-                        ]
-                      province:
-                        type: array
-                        description: Province must be exist if district and regency not exist
-                        items:
-                          type: string
-                        example: [
-                          "The province field is required when none of regency / district are present."
+                          "The regencies field is required."
                         ]
         '401':
           description: Unauthorized

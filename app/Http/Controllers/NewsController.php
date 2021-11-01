@@ -109,48 +109,42 @@ class NewsController extends Controller
     {
         $request->validate([
             'title' => 'required',
-            'url' => 'required|url',
+            'url' => 'required|url|unique:App\Models\News,url',
             'date' => 'date',
-            'isTrained' => 'required',
+            'is_trained' => 'required',
             'animals' => 'required',
             'label' => 'required|in:penyelundupan,penyitaan,perburuan,perdagangan,others',
-            'district' => 'required_without_all:regency,province',
-            'regency' => 'required_without_all:district,province',
-            'province' => 'required_without_all:regency,district',
+            'regencies' => 'required',
         ]);
 
         $news = new News([
             'title' => $request->title,
             'url' => $request->url,
             'date' => $request->date,
-            'isTrained' => $request->isTrained,
+            'is_trained' => $request->is_trained,
             'label' => $request->label,
         ]);
 
-        if ($request->district != null) {
-            $district = District::with('regency')->where('name', $request->district)->first();
-            $news->district_id = $district->id;
-            $news->regency_id = $district->regency_id;
-            $news->province_id = $district->regency->province_id;
-        } else if ($request->regency != null) {
-            $regency = Regency::where('name', $request->regency)->first();
-            $news->regency_id = $regency->id;
-            $news->province_id = $regency->province_id;
-        } else if ($request->province != null) {
-            $province = Province::where('name', $request->province)->first();
-            $news->province_id = $province->id;
-        }
+        $news->news_date = date('Y-m-d', strtotime($request->news_date));
 
         $result = DB::transaction(function () use ($news, $request) {
             try {
                 $news->site_id = Site::firstOrCreate(['name' => $request->site])->id;
-                $news->organization_id = Organization::firstOrCreate(['name' => $request->organization])->id;
                 $news->save();
 
                 foreach ($request->animals as $animal) {
                     $newAnimal = Animal::firstOrCreate(['name' => $animal['name']])->id;
-
                     $news->animals()->attach($newAnimal, ['amount' => $animal['amount']]);
+                }
+
+                foreach ($request->organizations as $organization) {
+                    $newOrganization = Organization::firstOrCreate(['name' => $organization])->id;
+                    $news->organizations()->attach($newOrganization);
+                }
+
+                foreach ($request->regencies as $regency) {
+                    $newRegency = Regency::firstOrCreate(['name' => $regency])->id;
+                    $news->regencies()->attach($newRegency);
                 }
 
                 Cache::put('organizations', Organization::all(['id', 'name']));
@@ -159,10 +153,11 @@ class NewsController extends Controller
 
                 Cache::tags(['news'])->flush();
 
-                $news->load(['organization', 'site', 'animals', 'district', 'regency', 'province']);
+                $news->load(['organizations', 'site', 'animals', 'regencies.province']);
 
                 return ResponseHelper::response("Successfully store news", 201, ['news' => $news]);
             } catch (Exception $e) {
+                DB::rollBack();
                 return ResponseHelper::response($e->getMessage(), 500);
             }
         });

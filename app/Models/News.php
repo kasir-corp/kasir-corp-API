@@ -10,17 +10,17 @@ class News extends Model
     use HasFactory;
 
     protected $table = "news";
-    protected $fillable = ["id", "title", "url", "date", "organization_id", "site_id", "district_id", "regency_id", "province_id", "isTrained", "label"];
-    protected $hidden = ['pivot', 'organization_id', 'site_id', 'district_id', 'regency_id', 'province_id', 'created_at', 'updated_at'];
+    protected $fillable = ["id", "title", "url", "date", "site_id", "is_trained", "label"];
+    protected $hidden = ['pivot', 'site_id', 'district_id', 'created_at', 'updated_at'];
 
     public function animals()
     {
         return $this->belongsToMany(Animal::class, 'animal_news', 'news_id', 'animal_id')->withPivot('amount');
     }
 
-    public function organization()
+    public function organizations()
     {
-        return $this->belongsTo(Organization::class);
+        return $this->belongsToMany(Organization::class, 'news_organization', 'news_id', 'organization_id');
     }
 
     public function site()
@@ -28,13 +28,8 @@ class News extends Model
         return $this->belongsTo(Site::class);
     }
 
-    public function province()
+    public function regencies()
     {
-        return $this->belongsTo(Province::class);
-    }
-
-    public function regency()
-    {
-        return $this->belongsTo(Regency::class);
+        return $this->belongsToMany(Regency::class, 'news_regency', 'news_id', 'regency_id');
     }
 }
