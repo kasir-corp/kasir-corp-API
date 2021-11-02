@@ -50,6 +50,8 @@ Route::group(["middleware" => "apikey"], function() {
         Route::post('/news', [NewsController::class, 'store']);
 
         Route::get('/keywords', [UserController::class, 'getKeywords']);
+
+        Route::get('/check-url', [NewsController::class, 'checkLink']);
     });
 
     Route::group(["prefix" => "auth"], function() {

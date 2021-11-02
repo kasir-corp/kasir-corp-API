@@ -1101,6 +1101,79 @@ paths:
               schema:
                 $ref: '#/components/schemas/inline_response_401'
 
+  '/api/general/check-url':
+    get:
+      tags:
+        - News
+      description: Check if URL exists in database
+      summary: Check existing URL
+      parameters:
+        - name: api_key
+          in: query
+          required: true
+          description: API key provided by Farrel Anshary
+          schema:
+            type: string
+          example: asdasd
+        - name: url
+          in: query
+          required: true
+          description: URL to be checked
+          schema:
+            type: string
+          example: https://apple.com/
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Returned data from server
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully check URL"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      is_existing:
+                        type: boolean
+                        description: Boolean whether the URL exists in the database
+                        example: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "The given data was invalid."
+                  errors:
+                    type: object
+                    description: List of error fields
+                    properties:
+                      url:
+                        type: array
+                        description: List of errors in url field
+                        items:
+                          type: string
+                        example: [
+                          "The url field is required.",
+                          "The url must be a valid URL."
+                        ]
+
   '/api/general/keywords':
     get:
       tags:

@@ -144,4 +144,27 @@ class NewsController extends Controller
 
         return $result;
     }
+
+    /**
+     * Check if link is existing or not
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function checkLink(Request $request)
+    {
+        $request->validate([
+            'url' => 'url|required'
+        ]);
+
+        $url = $request->get('url');
+
+        $existing = Cache::tags(['news'])->remember($url, 3600, function() use ($url) {
+            return News::where('url', $url)->exists();
+        });
+
+        return ResponseHelper::response("Successfully check URL", 200, [
+            'is_existing' => $existing
+        ]);
+    }
 }
