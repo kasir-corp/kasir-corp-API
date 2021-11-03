@@ -38,6 +38,7 @@ Route::group(["middleware" => "apikey"], function() {
         Route::get("/districts/{regencyId}", [RegionController::class, 'getDistricts']);
 
         Route::get('/animals', [AnimalController::class, 'getAllAnimals']);
+        Route::get('/animals/categories', [AnimalController::class, 'getAllCategories']);
         Route::post('/animals', [AnimalController::class, 'store']);
 
         Route::get('/organizations', [OrganizationController::class, 'getAllOrganizations']);

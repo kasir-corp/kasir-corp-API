@@ -10,8 +10,8 @@ class Animal extends Model
     use HasFactory;
 
     protected $table = "animals";
-    protected $fillable = ["id", "name"];
-    protected $hidden = ['pivot', 'created_at', 'updated_at'];
+    protected $fillable = ["id", "name", "category_id", "scientific_name"];
+    protected $hidden = ['pivot', 'created_at', 'updated_at', 'category_id'];
 
     public function news()
     {

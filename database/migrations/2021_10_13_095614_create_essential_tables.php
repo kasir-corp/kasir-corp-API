@@ -22,7 +22,7 @@ class CreateEssentialTables extends Migration
         Schema::create('animals', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('scientific_name');
+            $table->string('scientific_name')->nullable(true);
             $table->unsignedBigInteger('category_id');
             $table->timestamps();
         });

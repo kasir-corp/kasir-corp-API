@@ -47,7 +47,7 @@ class NewsController extends Controller
      */
     private function fetchNews(string $start, string $end, $queryString)
     {
-        $news = News::with(['organizations', 'site', 'animals', 'regencies']);
+        $news = News::with(['organizations', 'site', 'animals.category', 'regencies.province']);
 
         if ($queryString != null) {
             $news->where(function($query) use ($queryString) {
@@ -96,6 +96,7 @@ class NewsController extends Controller
             'animals' => 'required',
             'label' => 'required|in:penyelundupan,penyitaan,perburuan,perdagangan,others',
             'regencies' => 'required',
+            'regencies.*' => 'numeric'
         ]);
 
         $news = new News([
@@ -118,7 +119,13 @@ class NewsController extends Controller
 
                 foreach ($request->animals as $animal) {
                     $category = Category::firstOrCreate(['name' => $animal['category']])->id;
-                    $newAnimal = Animal::firstOrCreate(['name' => $animal['name'], 'category_id' => $category])->id;
+                    $newAnimal = Animal::firstOrCreate([
+                        'name' => $animal['name']
+                    ], [
+                        'scientific_name' => $animal['scientific_name'],
+                        'category_id' => $category
+                    ])->id;
+
                     $news->animals()->attach($newAnimal, ['amount' => $animal['amount']]);
                 }
 
@@ -127,9 +134,8 @@ class NewsController extends Controller
                     $news->organizations()->attach($newOrganization);
                 }
 
-                foreach ($request->post('regencies') as $regency) {
-                    $newRegency = Regency::where('name', $regency)->firstOrFail()->id;
-                    $news->regencies()->attach($newRegency);
+                foreach ($request->regencies as $regency) {
+                    $news->regencies()->attach($regency);
                 }
 
                 Cache::put('organizations', Organization::all(['id', 'name']));
@@ -138,7 +144,7 @@ class NewsController extends Controller
 
                 Cache::tags(['news'])->flush();
 
-                $news->load(['organizations', 'site', 'animals', 'regencies.province']);
+                $news->load(['organizations', 'site', 'animals.category', 'regencies.province']);
 
                 return ResponseHelper::response("Successfully store news", 201, ['news' => $news]);
             } catch (Exception $e) {

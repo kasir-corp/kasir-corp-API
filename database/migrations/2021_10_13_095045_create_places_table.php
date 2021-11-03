@@ -36,10 +36,6 @@ class CreatePlacesTable extends Migration
         Schema::table('regencies', function (Blueprint $table) {
             $table->foreign('province_id')->references('id')->on('provinces');
         });
-
-        Artisan::call('db:seed', ['--class' => 'RegionSeeder']);
-        Excel::import(new RegionImport(Province::all()), base_path('resources/data/listProvinsi.csv'));
-        Excel::import(new RegionImport(Regency::all()), base_path('resources/data/newlistKabupaten.csv'));
     }
 
     /**

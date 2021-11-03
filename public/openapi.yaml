@@ -49,11 +49,7 @@ paths:
                             name:
                               type: string
                               description: Name of the province
-                              example: "ACEH"
-                            alt_name:
-                              type: string
-                              description: Alternative name of the province
-                              example: "ACEH"
+                              example: "aceh"
                             latitude:
                               type: number
                               format: double
@@ -102,7 +98,7 @@ paths:
                   message:
                     type: string
                     description: Love letter from server ❤️
-                    example: "Successfully get all regencies in JAWA BARAT"
+                    example: "Successfully get all regencies in jawa barat"
                   data:
                     type: object
                     description: Returned data from server
@@ -118,11 +114,7 @@ paths:
                           name:
                             type: string
                             description: Name of the province
-                            example: JAWA BARAT
-                          alt_name:
-                              type: string
-                              description: Alternative name of the province
-                              example: JAWA BARAT
+                            example: jawa barat
                           latitude:
                             type: number
                             format: double
@@ -146,7 +138,7 @@ paths:
                                 name:
                                   type: string
                                   description: Name of the regency
-                                  example: KABUPATEN BOGOR
+                                  example: bogor
 
         '404':
           description: Not Found
@@ -218,6 +210,22 @@ paths:
                               type: string
                               description: Name of the animal
                               example: Harimau Sumatera
+                            category:
+                              type: object
+                              description: Category of the animal
+                              properties:
+                                id:
+                                  type: integer
+                                  description: ID represents a unique identifier of the category
+                                  example: 1
+                                name:
+                                  type: string
+                                  description: Category name
+                                  example: Harimau
+                            scientific_name:
+                              type: string
+                              description: Scientific name of the animal
+                              example: Panthera tigris sumatrae
         '401':
           description: Unauthorized
           content:
@@ -246,7 +254,15 @@ paths:
                 name:
                   type: string
                   description: Name of the animal
-                  example: Jackie Leonardy
+                  example: Harimau Sumatera
+                category:
+                  type: string
+                  description: Name of the animal
+                  example: Harimau
+                scientific_name:
+                  type: string
+                  description: Scientific name of the animal
+                  example: Panthera tigris sumatrae
       responses:
         '201':
           description: Created
@@ -275,6 +291,23 @@ paths:
                             type: string
                             description: Name of the animal
                             example: Harimau Sumatera
+                          category:
+                            type: object
+                            description: Category of the animal
+                            properties:
+                              id:
+                                type: integer
+                                description: ID represents a unique identifier of the category
+                                example: 1
+                              name:
+                                type: string
+                                description: Category name
+                                example: Harimau
+                          scientific_name:
+                            type: string
+                            description: Scientific name of the animal
+                            example: Panthera tigris sumatrae
+
         '401':
           description: Unauthorized
           content:
@@ -299,13 +332,79 @@ paths:
                     properties:
                       name:
                         type: array
-                        description: List of errors in one field
+                        description: List of errors in name field
                         items:
                           type: string
                         example: [
                           "The name field is required.",
                           "The name has already been taken."
                         ]
+                      category:
+                        type: array
+                        description: List of errors in category field
+                        items:
+                          type: string
+                        example: [
+                          "The category field is required.",
+                        ]
+
+  '/api/general/animals/categories':
+    get:
+      tags:
+        - Animals
+      description: Get or search all categories, add query to your parameters to search for categories
+      parameters:
+        - name: api_key
+          in: query
+          required: true
+          description: API key provided by Farrel Anshary
+          schema:
+            type: string
+          example: asdasd
+        - name: query
+          in: query
+          required: false
+          description: Search query (optional)
+          schema:
+            type: string
+          example: Harimau
+      summary: Get / search all categories
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully get categories"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      categories:
+                        type: array
+                        description: Categories data
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: ID represents a unique identifier of the category
+                              example: 1
+                            name:
+                              type: string
+                              description: Name of the category
+                              example: Harimau
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
 
   '/api/general/organizations':
     get:
@@ -718,10 +817,26 @@ paths:
                                     type: string
                                     description: Name of the animal
                                     example: Penyu Lekang
+                                  scientific_name:
+                                    type: string
+                                    description: Scientific name of the animal
+                                    example: Lepidochelys olivacea
                                   amount:
                                     type: integer
                                     description: Amount of the animal involved
                                     example: 1
+                                  category:
+                                    type: object
+                                    description: Category of the animal
+                                    properties:
+                                      id:
+                                        type: integer
+                                        description: ID represents a unique identifier of the category
+                                        example: 1
+                                      name:
+                                        type: string
+                                        description: Category name
+                                        example: Penyu
                             regencies:
                               type: array
                               description: Regencies where the case happened (nullable)
@@ -736,7 +851,7 @@ paths:
                                   name:
                                     type: string
                                     description: Name of the regency
-                                    example: KABUPATEN GUNUNG KIDUL
+                                    example: gunung kidul
                                   province:
                                     type: object
                                     description: Province where the case happened (nullable)
@@ -748,11 +863,7 @@ paths:
                                       name:
                                         type: string
                                         description: Name of the province
-                                        example: "DI YOGYAKARTA"
-                                      alt_name:
-                                        type: string
-                                        description: Alternative name of the province
-                                        example: "DI YOGYAKARTA"
+                                        example: di yogyakarta
                                       latitude:
                                         type: number
                                         format: double
@@ -822,6 +933,7 @@ paths:
                 - isTrained
                 - animals
                 - label
+                - regencies
               properties:
                 api_key:
                   type: string
@@ -866,10 +978,10 @@ paths:
                   example: Borneo24.com - Berita Terbaru dan Terkini di Kalimantan
                 regencies:
                   type: array
-                  description: Regencies where the case happened (optional)
+                  description: Regencies where the case happened
                   items:
-                    type: string
-                  example: [KABUPATEN SABU RAIJUA]
+                    type: integer
+                  example: [5320]
                 animals:
                   type: array
                   description: Animals involved in this case
@@ -884,6 +996,14 @@ paths:
                         type: integer
                         description: Amount of the animal involved
                         example: 3
+                      category:
+                        type: string
+                        description: Category of the animal
+                        example: Penyu
+                      scientific_name:
+                        type: string
+                        description: Scientific name of the animal
+                        example: Chelonia mydas
 
       responses:
         '201':
@@ -976,13 +1096,29 @@ paths:
                                   type: string
                                   description: Name of the animal
                                   example: Penyu Hijau
+                                scientific_name:
+                                  type: string
+                                  description: Scientific_name of the animal
+                                  example: Chelonia mydas
                                 amount:
                                   type: integer
                                   description: Amount of the animal involved
                                   example: 3
+                                category:
+                                  type: object
+                                  description: Category of the animal
+                                  properties:
+                                    id:
+                                      type: integer
+                                      description: ID represents a unique identifier of the category
+                                      example: 1
+                                    name:
+                                      type: string
+                                      description: Category name
+                                      example: Penyu
                           regencies:
                             type: array
-                            description: Regencies where the case happened (nullable)
+                            description: Regencies where the case happened
                             items:
                               type: object
                               properties:
@@ -993,7 +1129,7 @@ paths:
                                 name:
                                   type: string
                                   description: Name of the regency
-                                  example: KABUPATEN SABU RAIJUA
+                                  example: sabu raijua
                                 province:
                                   type: object
                                   description: Province of the regency
@@ -1005,7 +1141,7 @@ paths:
                                     name:
                                       type: string
                                       description: Name of the province
-                                      example: NUSA TENGGARA TIMUR
+                                      example: nusa tenggara timur
                                     longitude:
                                       type: number
                                       format: double
@@ -1016,10 +1152,6 @@ paths:
                                       format: double
                                       description: Latitude of the province
                                       example: -8.56568
-                                    alt_name:
-                                      type: string
-                                      description: Alternative name of the province
-                                      example: NUSA TENGGARA TIMUR
         '422':
           description: Unprocessable Entity
           content:
@@ -1092,7 +1224,8 @@ paths:
                         items:
                           type: string
                         example: [
-                          "The regencies field is required."
+                          "The regencies field is required.",
+                          "The regencies.0 must be a number."
                         ]
         '401':
           description: Unauthorized
