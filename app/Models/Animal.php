@@ -22,4 +22,9 @@ class Animal extends Model
     {
         return $this->belongsToMany(Edited::class, 'edited_animal', 'animal_id', 'news_id')->withPivot('amount');
     }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
 }

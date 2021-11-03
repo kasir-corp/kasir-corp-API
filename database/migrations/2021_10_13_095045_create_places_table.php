@@ -1,8 +1,13 @@
 <?php
 
+use App\Imports\RegionImport;
+use App\Models\Province;
+use App\Models\Regency;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CreatePlacesTable extends Migration
 {
@@ -18,7 +23,6 @@ class CreatePlacesTable extends Migration
             $table->string('name');
             $table->double('longitude');
             $table->double('latitude');
-            $table->string('alt_name');
             $table->timestamps();
         });
 
@@ -33,6 +37,9 @@ class CreatePlacesTable extends Migration
             $table->foreign('province_id')->references('id')->on('provinces');
         });
 
+        Artisan::call('db:seed', ['--class' => 'RegionSeeder']);
+        Excel::import(new RegionImport(Province::all()), base_path('resources/data/listProvinsi.csv'));
+        Excel::import(new RegionImport(Regency::all()), base_path('resources/data/newlistKabupaten.csv'));
     }
 
     /**

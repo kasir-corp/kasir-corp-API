@@ -28,7 +28,6 @@ class RegionSeeder extends Seeder
                 'name' => $province['name'],
                 'latitude' => $province['latitude'],
                 'longitude' => $province['longitude'],
-                'alt_name' => $province['alt_name'],
             ]);
             $provinceId = $province['id'];
 

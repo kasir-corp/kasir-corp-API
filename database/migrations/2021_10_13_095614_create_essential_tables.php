@@ -13,10 +13,22 @@ class CreateEssentialTables extends Migration
      */
     public function up()
     {
-        Schema::create('animals', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->timestamps();
+        });
+
+        Schema::create('animals', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('scientific_name');
+            $table->unsignedBigInteger('category_id');
+            $table->timestamps();
+        });
+
+        Schema::table('animals', function(Blueprint $table) {
+            $table->foreign('category_id')->references('id')->on('categories');
         });
 
         Schema::create('sites', function (Blueprint $table) {

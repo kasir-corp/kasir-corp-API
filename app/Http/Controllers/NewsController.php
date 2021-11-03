@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
 use App\Models\Animal;
+use App\Models\Category;
 use App\Models\News;
 use App\Models\Organization;
 use App\Models\Regency;
@@ -109,11 +110,15 @@ class NewsController extends Controller
 
         $result = DB::transaction(function () use ($news, $request) {
             try {
-                $news->site_id = Site::firstOrCreate(['name' => $request->site])->id;
+                if ($request->site) {
+                    $news->site_id = Site::firstOrCreate(['name' => $request->site])->id;
+                }
+
                 $news->save();
 
                 foreach ($request->animals as $animal) {
-                    $newAnimal = Animal::firstOrCreate(['name' => $animal['name']])->id;
+                    $category = Category::firstOrCreate(['name' => $animal['category']])->id;
+                    $newAnimal = Animal::firstOrCreate(['name' => $animal['name'], 'category_id' => $category])->id;
                     $news->animals()->attach($newAnimal, ['amount' => $animal['amount']]);
                 }
 
@@ -122,8 +127,8 @@ class NewsController extends Controller
                     $news->organizations()->attach($newOrganization);
                 }
 
-                foreach ($request->regencies as $regency) {
-                    $newRegency = Regency::firstOrCreate(['name' => $regency])->id;
+                foreach ($request->post('regencies') as $regency) {
+                    $newRegency = Regency::where('name', $regency)->firstOrFail()->id;
                     $news->regencies()->attach($newRegency);
                 }
 
