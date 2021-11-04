@@ -36,10 +36,6 @@ class CreatePlacesTable extends Migration
         Schema::table('regencies', function (Blueprint $table) {
             $table->foreign('province_id')->references('id')->on('provinces');
         });
-
-        Artisan::call('db:seed', [
-            '--class' => 'RegionSeeder'
-        ]);
     }
 
     /**

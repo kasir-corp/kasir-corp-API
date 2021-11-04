@@ -32,10 +32,6 @@ class CreateEssentialTables extends Migration
             $table->foreign('category_id')->references('id')->on('categories');
         });
 
-        Artisan::call('db:seed', [
-            '--class' => 'AnimalSeeder'
-        ]);
-
         Schema::create('sites', function (Blueprint $table) {
             $table->id();
             $table->string('name');
