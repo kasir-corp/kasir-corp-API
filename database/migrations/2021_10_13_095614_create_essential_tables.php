@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
 
 class CreateEssentialTables extends Migration
@@ -30,6 +31,10 @@ class CreateEssentialTables extends Migration
         Schema::table('animals', function(Blueprint $table) {
             $table->foreign('category_id')->references('id')->on('categories');
         });
+
+        Artisan::call('db:seed', [
+            '--class' => 'AnimalSeeder'
+        ]);
 
         Schema::create('sites', function (Blueprint $table) {
             $table->id();
