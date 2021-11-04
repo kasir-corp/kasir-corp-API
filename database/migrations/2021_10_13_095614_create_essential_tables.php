@@ -24,7 +24,7 @@ class CreateEssentialTables extends Migration
             $table->id();
             $table->string('name');
             $table->string('scientific_name')->nullable(true);
-            $table->unsignedBigInteger('category_id');
+            $table->unsignedBigInteger('category_id')->nullable(true);
             $table->timestamps();
         });
 
