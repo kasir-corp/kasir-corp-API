@@ -62,8 +62,8 @@ class RegionController extends Controller
     /**
      * Get trending region. Ordered by number of news descendingly
      *
-     * @param  mixed $request
-     * @return void
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
      */
     public function getTrendingProvinces(Request $request)
     {

@@ -178,4 +178,46 @@ class NewsController extends Controller
             'is_existing' => $existing
         ]);
     }
+
+    /**
+     * Get trending news label. Ordered by numbers of news descendingly
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getTrendingLabel(Request $request)
+    {
+        $labels = ['penyelundupan', 'penyitaan', 'perburuan', 'perdagangan', 'others'];
+
+        $request->validate([
+            'start' => 'required|date',
+            'end' => 'required|date'
+        ]);
+
+        $start = $request->start;
+        $end = $request->end;
+
+        $data = [];
+        foreach ($labels as $label) {
+            $data[] = [
+                'name' => $label,
+                'news_count' => News::where('label', $label)->whereBetween('date', [$start, $end])->count()
+            ];
+        }
+
+        $total = 0;
+        foreach ($data as $label) {
+            $total += $label['news_count'];
+        }
+
+        $newsCount = array_column($data, 'news_count');
+        array_multisort($newsCount, SORT_DESC, $data);
+
+        return ResponseHelper::response('Successfully get trending label', 200, [
+            'total' => $total,
+            'selected_start' => $start,
+            'selected_end' => $end,
+            'labels' => $data
+        ]);
+    }
 }

@@ -66,6 +66,12 @@ class SiteController extends Controller
         }
     }
 
+    /**
+     * Get trending sites.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function getTrendingSites(Request $request)
     {
         $request->validate([
