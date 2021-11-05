@@ -197,13 +197,16 @@ class NewsController extends Controller
         $start = $request->start;
         $end = $request->end;
 
-        $data = [];
-        foreach ($labels as $label) {
-            $data[] = [
-                'name' => $label,
-                'news_count' => News::where('label', $label)->whereBetween('date', [$start, $end])->count()
-            ];
-        }
+        $data = Cache::tags(['trending'])->remember("trending.labels.$start.$end", 300, function () use ($start, $end, $labels) {
+            $data = [];
+            foreach ($labels as $label) {
+                $data[] = [
+                    'name' => $label,
+                    'news_count' => News::where('label', $label)->whereBetween('date', [$start, $end])->count()
+                ];
+            }
+            return $data;
+        });
 
         $total = 0;
         foreach ($data as $label) {
