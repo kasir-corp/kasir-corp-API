@@ -58,6 +58,7 @@ Route::group(["middleware" => "apikey"], function() {
             Route::get('/animals', [AnimalController::class, 'getNumbersOfCases']);
             Route::get('/rising', [AnimalController::class, 'getRisingCases']);
             Route::get('/region', [RegionController::class, 'getTrendingProvinces']);
+            Route::get('/sites', [SiteController::class, 'getTrendingSites']);
         });
     });
 

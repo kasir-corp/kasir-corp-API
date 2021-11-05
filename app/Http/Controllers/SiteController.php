@@ -21,11 +21,11 @@ class SiteController extends Controller
         $query = $request->get('query');
 
         if ($query != null) {
-            $sites = Cache::remember("sites_$query", 3600, function() use ($query) {
+            $sites = Cache::remember("sites_$query", 3600, function () use ($query) {
                 return Site::where('name', 'like', "%$query%")->get(['id', 'name']);
             });
         } else {
-            $sites = Cache::remember('sites', 3600, function() {
+            $sites = Cache::remember('sites', 3600, function () {
                 return Site::all(['id', 'name']);
             });
         }
@@ -64,5 +64,37 @@ class SiteController extends Controller
         } else {
             return ResponseHelper::response("Unknown server error", 500);
         }
+    }
+
+    public function getTrendingSites(Request $request)
+    {
+        $request->validate([
+            'start' => 'required|date',
+            'end' => 'required|date'
+        ]);
+
+        $start = $request->start;
+        $end = $request->end;
+
+        $sites = Cache::tags(['trending'])
+            ->remember("trending.sites.$start.$end", 300, function () use ($start, $end) {
+                return Site::withCount(['news' => function ($query) use ($start, $end) {
+                    $query->whereBetween('news.date', [$start, $end]);
+                }])
+                    ->orderBy('news_count', 'desc')
+                    ->get();
+            });
+
+        $total = 0;
+        foreach ($sites as $site) {
+            $total += $site->news_count;
+        }
+
+        return ResponseHelper::response("Successfully get trending sites", 200, [
+            'total' => $total,
+            'selected_start' => $start,
+            'selected_end' => $end,
+            'sites' => $sites
+        ]);
     }
 }
