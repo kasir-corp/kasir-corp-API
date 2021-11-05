@@ -1717,7 +1717,8 @@ paths:
                         items:
                           type: string
                         example: [
-                          "The start field is required."
+                          "The start field is required.",
+                          "The start is not a valid date."
                         ]
                       end:
                         type: array
@@ -1725,7 +1726,8 @@ paths:
                         items:
                           type: string
                         example: [
-                          "The end field is required."
+                          "The end field is required.",
+                          "The end is not a valid date."
                         ]
         '401':
           description: Unauthorized
@@ -1854,7 +1856,8 @@ paths:
                         items:
                           type: string
                         example: [
-                          "The start field is required."
+                          "The start field is required.",
+                          "The start is not a valid date."
                         ]
                       end:
                         type: array
@@ -1862,7 +1865,8 @@ paths:
                         items:
                           type: string
                         example: [
-                          "The end field is required."
+                          "The end field is required.",
+                          "The end is not a valid date."
                         ]
         '401':
           description: Unauthorized
