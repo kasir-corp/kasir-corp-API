@@ -1646,7 +1646,7 @@ paths:
             type: string
             format: date
           example: '2021-10-31'
-      summary: Get number of cases
+      summary: Get trending animals
       responses:
         '200':
           description: OK
@@ -1835,6 +1835,135 @@ paths:
                               description: Total number of cases
                               example: 53.84615384615385
 
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "The given data was invalid."
+                  errors:
+                    type: object
+                    description: List of error fields
+                    properties:
+                      start:
+                        type: array
+                        description: List of errors in start field
+                        items:
+                          type: string
+                        example: [
+                          "The start field is required.",
+                          "The start is not a valid date."
+                        ]
+                      end:
+                        type: array
+                        description: List of errors in end field
+                        items:
+                          type: string
+                        example: [
+                          "The end field is required.",
+                          "The end is not a valid date."
+                        ]
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
+  '/api/general/trending/region':
+    get:
+      tags:
+        - Trending
+      description: Get number of cases of a region. Sorted by number of cases descendingly
+      parameters:
+        - name: api_key
+          in: query
+          required: true
+          description: API key provided by Farrel Anshary
+          schema:
+            type: string
+          example: asdasd
+        - name: start
+          in: query
+          required: true
+          description: Start date of the news
+          schema:
+            type: string
+            format: date
+          example: '2015-10-24'
+        - name: end
+          in: query
+          required: true
+          description: End date of the news
+          schema:
+            type: string
+            format: date
+          example: '2021-10-31'
+      summary: Get trending province
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Returned data from server
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully get trending region"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      total:
+                        type: integer
+                        description: Total numbers of cases
+                        example: 477
+                      selected_start:
+                        type: string
+                        format: date
+                        description: Start date selected by user
+                        example: '2020-10-30'
+                      selected_end:
+                        type: string
+                        format: date
+                        description: End date selected by user
+                        example: '2021-10-30'
+                      provinces:
+                        type: array
+                        description: Single province data
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: ID represents a unique identifier of the province
+                              example: 11
+                            name:
+                              type: string
+                              description: Name of the province
+                              example: "aceh"
+                            latitude:
+                              type: number
+                              format: double
+                              description: Latitude of the province
+                              example: 4.36855
+                            longitude:
+                              type: number
+                              format: double
+                              description: Longitude of the province
+                              example: 97.0253
+                            news_count:
+                              type: integer
+                              description: Total cases in this province
+                              example: 17
         '422':
           description: Unprocessable Entity
           content:

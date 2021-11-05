@@ -7,6 +7,7 @@ use App\Models\Province;
 use App\Models\Regency;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class RegionController extends Controller
 {
@@ -56,5 +57,50 @@ class RegionController extends Controller
             200,
             ['province' => $province]
         );
+    }
+
+    /**
+     * Get trending region. Ordered by number of news descendingly
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    public function getTrendingProvinces(Request $request)
+    {
+        $request->validate([
+            'start' => 'required|date',
+            'end' => 'required|date'
+        ]);
+
+        $start = $request->start;
+        $end = $request->end;
+
+        $provinces = Cache::tags(['trending'])
+            ->remember("trending.region.$start.$end", 300, function () use ($start, $end) {
+                return DB::table('provinces')
+                    ->select('provinces.id', 'provinces.name', 'provinces.latitude', 'provinces.longitude',
+                        DB::raw("
+                            (SELECT COUNT(*) FROM regencies
+                            JOIN news_regency ON news_regency.regency_id=regencies.id
+                            JOIN news ON news_regency.news_id=news.id
+                            WHERE regencies.province_id=provinces.id
+                            AND news.news_date BETWEEN '$start' AND '$end') AS news_count
+                        ")
+                    )
+                    ->orderBy('news_count', 'desc')
+                    ->get();
+            });
+
+        $total = 0;
+        foreach ($provinces as $province) {
+            $total += $province->news_count;
+        }
+
+        return ResponseHelper::response("Successfully get trending region", 200, [
+            'total' => $total,
+            'selected_start' => $start,
+            'selected_end' => $end,
+            'provinces' => $provinces,
+        ]);
     }
 }
