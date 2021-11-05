@@ -142,7 +142,7 @@ class NewsController extends Controller
                 Cache::put('sites', Site::all(['id', 'name']));
                 Cache::put('animals', Animal::all(['id', 'name']));
 
-                Cache::tags(['news'])->flush();
+                Cache::tags(['news', 'trending'])->flush();
 
                 $news->load(['organizations', 'site', 'animals.category', 'regencies.province']);
 

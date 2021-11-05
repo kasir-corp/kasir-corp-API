@@ -1617,6 +1617,260 @@ paths:
               schema:
                 $ref: '#/components/schemas/inline_response_401'
 
+  '/api/general/trending/animals':
+    get:
+      tags:
+        - Trending
+      description: Get number of cases of an animal. Sorted by number of cases descendingly
+      parameters:
+        - name: api_key
+          in: query
+          required: true
+          description: API key provided by Farrel Anshary
+          schema:
+            type: string
+          example: asdasd
+        - name: start
+          in: query
+          required: true
+          description: Start date of the news
+          schema:
+            type: string
+            format: date
+          example: '2015-10-24'
+        - name: end
+          in: query
+          required: true
+          description: End date of the news
+          schema:
+            type: string
+            format: date
+          example: '2021-10-31'
+      summary: Get number of cases
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Returned data from server
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully get animal trending"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      total:
+                        type: integer
+                        description: Total numbers of cases
+                        example: 632
+                      selected_start:
+                        type: string
+                        format: date
+                        description: Start date selected by user
+                        example: '2020-10-30'
+                      selected_end:
+                        type: string
+                        format: date
+                        description: End date selected by user
+                        example: '2021-10-30'
+                      categories:
+                        type: array
+                        description: Categories data
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: ID represents a unique identifier of the category
+                              example: 1
+                            name:
+                              type: string
+                              description: Name of the category
+                              example: Harimau
+                            news_count:
+                              type: integer
+                              description: Numbers of news found in this category
+                              example: 62
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "The given data was invalid."
+                  errors:
+                    type: object
+                    description: List of error fields
+                    properties:
+                      start:
+                        type: array
+                        description: List of errors in start field
+                        items:
+                          type: string
+                        example: [
+                          "The start field is required."
+                        ]
+                      end:
+                        type: array
+                        description: List of errors in end field
+                        items:
+                          type: string
+                        example: [
+                          "The end field is required."
+                        ]
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
+  '/api/general/trending/rising':
+    get:
+      tags:
+        - Trending
+      description: Get number of rising cases of animals. Sorted by rising cases
+      parameters:
+        - name: api_key
+          in: query
+          required: true
+          description: API key provided by Farrel Anshary
+          schema:
+            type: string
+          example: asdasd
+        - name: start
+          in: query
+          required: true
+          description: Start date of the news
+          schema:
+            type: string
+            format: date
+          example: '2015-10-24'
+        - name: end
+          in: query
+          required: true
+          description: End date of the news
+          schema:
+            type: string
+            format: date
+          example: '2021-10-31'
+      summary: Get number of rising cases
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Returned data from server
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully get rising cases"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      selected_start:
+                        type: string
+                        format: date
+                        description: Start date selected by user
+                        example: '2020-10-30'
+                      selected_end:
+                        type: string
+                        format: date
+                        description: End date selected by user
+                        example: '2021-10-30'
+                      old_start:
+                        type: string
+                        format: date
+                        description: Start date returned by server
+                        example: '2019-10-30'
+                      old_end:
+                        type: string
+                        format: date
+                        description: End date returned by server
+                        example: '2020-10-29'
+                      categories:
+                        type: array
+                        description: Categories data
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: ID represents a unique identifier of the category
+                              example: 1
+                            name:
+                              type: string
+                              description: Name of the category
+                              example: Burung
+                            old:
+                              type: integer
+                              description: Old number of cases
+                              example: 13
+                            recent:
+                              type: integer
+                              description: Recent number of cases
+                              example: 20
+                            total:
+                              type: integer
+                              description: Total number of cases
+                              example: 33
+                            percentage:
+                              type: number
+                              format: double
+                              description: Total number of cases
+                              example: 53.84615384615385
+
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "The given data was invalid."
+                  errors:
+                    type: object
+                    description: List of error fields
+                    properties:
+                      start:
+                        type: array
+                        description: List of errors in start field
+                        items:
+                          type: string
+                        example: [
+                          "The start field is required."
+                        ]
+                      end:
+                        type: array
+                        description: List of errors in end field
+                        items:
+                          type: string
+                        example: [
+                          "The end field is required."
+                        ]
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
 
 components:
   schemas:

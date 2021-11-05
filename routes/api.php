@@ -53,6 +53,11 @@ Route::group(["middleware" => "apikey"], function() {
         Route::get('/keywords', [UserController::class, 'getKeywords']);
 
         Route::get('/check-url', [NewsController::class, 'checkLink']);
+
+        Route::group(["prefix" => "trending"], function () {
+            Route::get('/animals', [AnimalController::class, 'getNumbersOfCases']);
+            Route::get('/rising', [AnimalController::class, 'getRisingCases']);
+        });
     });
 
     Route::group(["prefix" => "auth"], function() {

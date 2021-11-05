@@ -17,8 +17,8 @@ class AnimalImport implements ToCollection, WithCustomCsvSettings
     {
         foreach ($collection as $row) {
             $animal = new Animal();
-            $animal->name = $row[0];
-            $animal->category_id = Category::firstOrCreate(['name' => $row[1]])->id;
+            $animal->name = strtolower($row[0]);
+            $animal->category_id = Category::firstOrCreate(['name' => strtolower($row[1])])->id;
             $animal->scientific_name = $row[2];
 
             $animal->save();

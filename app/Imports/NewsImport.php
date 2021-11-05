@@ -54,13 +54,13 @@ class NewsImport implements ToCollection
                     }
 
                     if ($row[12]) {
-                        $animalName = $row[12];
+                        $animalName = strtolower($row[12]);
                         $categoryName = explode(' ', $animalName)[0];
                         $category = Category::firstOrCreate(['name' => $categoryName])->id;
 
                         $animal = Animal::firstOrCreate(
                             [
-                                'name' => strtolower($animalName)
+                                'name' => $animalName
                             ],
                             [
                                 'scientific_name' => $row[13],
