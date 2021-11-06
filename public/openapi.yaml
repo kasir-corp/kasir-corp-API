@@ -2402,6 +2402,143 @@ paths:
               schema:
                 $ref: '#/components/schemas/inline_response_401'
 
+  '/api/general/trending/sites/{id}':
+    get:
+      tags:
+        - Trending
+      description: Get number of cases reported by a site. Sorted by number of cases descendingly
+      parameters:
+        - name: api_key
+          in: query
+          required: true
+          description: API key provided by Farrel Anshary
+          schema:
+            type: string
+          example: asdasd
+        - name: start
+          in: query
+          required: true
+          description: Start date of the news
+          schema:
+            type: string
+            format: date
+          example: '2015-10-24'
+        - name: end
+          in: query
+          required: true
+          description: End date of the news
+          schema:
+            type: string
+            format: date
+          example: '2021-10-31'
+        - name: categoryId
+          in: path
+          required: true
+          description: ID of the animal category
+          schema:
+            type: integer
+          example: 79
+      summary: Get trending sites by category ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Returned data from server
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully get trending sites where kakatua involved"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      total:
+                        type: integer
+                        description: Total numbers of cases
+                        example: 49
+                      selected_start:
+                        type: string
+                        format: date
+                        description: Start date selected by user
+                        example: '2020-10-30'
+                      selected_end:
+                        type: string
+                        format: date
+                        description: End date selected by user
+                        example: '2021-10-30'
+                      sites:
+                        type: array
+                        description: Sites data
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: ID represents a unique identifier of the website
+                              example: 1
+                            name:
+                              type: string
+                              description: Name of the website
+                              example: detiknews
+                            news_count:
+                              type: integer
+                              description: Total cases in this website
+                              example: 4
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "The given data was invalid."
+                  errors:
+                    type: object
+                    description: List of error fields
+                    properties:
+                      start:
+                        type: array
+                        description: List of errors in start field
+                        items:
+                          type: string
+                        example: [
+                          "The start field is required.",
+                          "The start is not a valid date."
+                        ]
+                      end:
+                        type: array
+                        description: List of errors in end field
+                        items:
+                          type: string
+                        example: [
+                          "The end field is required.",
+                          "The end is not a valid date."
+                        ]
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "No query results for model [App\\Models\\Category] 1000"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
   '/api/general/trending/labels':
     get:
       tags:

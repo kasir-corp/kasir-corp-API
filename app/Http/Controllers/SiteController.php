@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
+use App\Models\Category;
 use App\Models\Site;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -102,5 +103,45 @@ class SiteController extends Controller
             'selected_end' => $end,
             'sites' => $sites
         ]);
+    }
+
+    public function getTrendingSitesById($id, Request $request)
+    {
+        $request->validate([
+            'start' => 'required|date',
+            'end' => 'required|date'
+        ]);
+
+        $start = $request->start;
+        $end = $request->end;
+
+        $category = Category::findOrFail($id);
+
+        $sites = Cache::tags(['trending'])
+            ->remember("trending.sites.$id.$start.$end", 300, function () use ($id, $start, $end) {
+                $sites = Site::withCount(['news' => function ($query) use ($id, $start, $end) {
+                    $query->join('animal_news', 'animal_news.news_id', '=', 'news.id')
+                        ->join('animals', 'animal_news.animal_id', '=', 'animals.id')
+                        ->where('animals.category_id', '=', $id)
+                        ->whereBetween('news.date', [$start, $end]);
+                }])
+                    ->orderBy('news_count', 'desc')
+                    ->get();
+
+                $total = 0;
+                foreach ($sites as $site) {
+                    $total += $site->news_count;
+                }
+
+                return [
+                    'total' => $total,
+                    'selected_start' => $start,
+                    'selected_end' => $end,
+                    'sites' => $sites
+                ];
+            });
+
+
+        return ResponseHelper::response("Successfully get trending sites where $category->name involved", 200, $sites);
     }
 }
