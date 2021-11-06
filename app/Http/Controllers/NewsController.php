@@ -226,6 +226,13 @@ class NewsController extends Controller
         ]);
     }
 
+    /**
+     * Get trending label where an animal is included
+     *
+     * @param  \Illuminate\Http\Request $id
+     * @param  \Illuminate\Http\Response $request
+     * @return void
+     */
     public function getTrendingLabelById($id, Request $request)
     {
         $labels = $this->labels;
