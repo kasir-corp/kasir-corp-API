@@ -146,6 +146,13 @@ class AnimalController extends Controller
         return ResponseHelper::response("Successfully get animal trending", 200, $data);
     }
 
+    /**
+     * Get numbers of cases by ID
+     *
+     * @param  int $id
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function getNumbersOfCasesById($id, Request $request)
     {
         $request->validate([
