@@ -116,13 +116,14 @@ class AnimalController extends Controller
         $data = Cache::tags(['trending'])
             ->remember("trending.cases.$start.$end", 300, function () use ($start, $end) {
                 $categories = DB::table('categories')
-                    ->select('categories.id', 'categories.name')
-                    ->selectRaw('count(*) as news_count')
-                    ->join('animals', 'animals.category_id', '=', 'categories.id')
-                    ->join('animal_news', 'animal_news.animal_id', '=', 'animals.id')
-                    ->join('news', 'animal_news.news_id', '=', 'news.id')
-                    ->whereBetween('date', [$start, $end])
-                    ->groupBy('categories.id')
+                    ->select('categories.id', 'categories.name',
+                        DB::raw("(
+                            SELECT count(*) FROM animals
+                            JOIN `animal_news` ON `animal_news`.`animal_id` = `animals`.`id`
+                            JOIN `news` ON `animal_news`.`news_id` = `news`.`id`
+                            WHERE animals.category_id=categories.id
+                        ) AS news_count")
+                    )
                     ->orderBy('news_count', 'desc')
                     ->orderBy('categories.name')
                     ->get();
@@ -174,22 +175,20 @@ class AnimalController extends Controller
             ->remember("trending.rising.$start.$end", 300, function () use ($startOldDate, $endOldDate, $startRecentDate, $endRecentDate) {
                 $categories = DB::table('categories')
                     ->select('categories.id', 'categories.name',
-                        DB::raw("IFNULL(
+                        DB::raw("
                                 (SELECT COUNT(*) FROM animals
                                 JOIN animal_news ON animal_news.animal_id=animals.id
                                 JOIN news ON animal_news.news_id=news.id
                                 WHERE animals.category_id=categories.id
                                 AND news.news_date BETWEEN '$startOldDate' AND '$endOldDate'
-                                GROUP BY categories.id), 0
                             ) AS old
                         "),
-                        DB::raw("IFNULL(
+                        DB::raw("
                                 (SELECT COUNT(*) FROM animals
                                 JOIN animal_news ON animal_news.animal_id=animals.id
                                 JOIN news ON animal_news.news_id=news.id
                                 WHERE animals.category_id=categories.id
                                 AND news.news_date BETWEEN '$startRecentDate' AND '$endRecentDate'
-                                GROUP BY categories.id), 0
                             ) AS recent
                         ")
                     )
