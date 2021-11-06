@@ -122,6 +122,7 @@ class AnimalController extends Controller
                             JOIN `animal_news` ON `animal_news`.`animal_id` = `animals`.`id`
                             JOIN `news` ON `animal_news`.`news_id` = `news`.`id`
                             WHERE animals.category_id=categories.id
+                            AND news.news_date BETWEEN '$start' AND '$end'
                         ) AS news_count")
                     )
                     ->orderBy('news_count', 'desc')
@@ -143,6 +144,45 @@ class AnimalController extends Controller
 
 
         return ResponseHelper::response("Successfully get animal trending", 200, $data);
+    }
+
+    public function getNumbersOfCasesById($id, Request $request)
+    {
+        $request->validate([
+            'start' => 'required|date',
+            'end' => 'required|date'
+        ]);
+
+        $start = $request->start;
+        $end = $request->end;
+
+        $category = Cache::tags(['trending'])
+            ->remember("trending.animal.$id.$start.$end", 300, function () use ($id, $start, $end) {
+                return DB::table('categories')
+                    ->select('categories.id', 'categories.name',
+                        DB::raw("(
+                            SELECT count(*) FROM animals
+                            JOIN `animal_news` ON `animal_news`.`animal_id` = `animals`.`id`
+                            JOIN `news` ON `animal_news`.`news_id` = `news`.`id`
+                            WHERE animals.category_id=categories.id
+                            AND news.news_date BETWEEN '$start' AND '$end'
+                        ) AS news_count")
+                    )
+                    ->where('categories.id', '=', $id)
+                    ->orderBy('news_count', 'desc')
+                    ->orderBy('categories.name')
+                    ->first();
+            });
+
+        if ($category == null) {
+            return ResponseHelper::response("Animal not found", 404);
+        }
+
+        return ResponseHelper::response("Successfully get $category->name cases", 200, [
+            'selected_start' => $start,
+            'selected_end' => $end,
+            'category' => $category,
+        ]);
     }
 
     /**
