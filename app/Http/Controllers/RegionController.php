@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
+use App\Models\Category;
 use App\Models\Province;
 use App\Models\Regency;
 use Illuminate\Http\Request;
@@ -75,9 +76,9 @@ class RegionController extends Controller
         $start = $request->start;
         $end = $request->end;
 
-        $provinces = Cache::tags(['trending'])
+        $data = Cache::tags(['trending'])
             ->remember("trending.region.$start.$end", 300, function () use ($start, $end) {
-                return DB::table('provinces')
+                $provinces = DB::table('provinces')
                     ->select('provinces.id', 'provinces.name', 'provinces.latitude', 'provinces.longitude',
                         DB::raw("
                             (SELECT COUNT(*) FROM regencies
@@ -89,18 +90,77 @@ class RegionController extends Controller
                     )
                     ->orderBy('news_count', 'desc')
                     ->get();
+
+                $total = 0;
+                foreach ($provinces as $province) {
+                    $total += $province->news_count;
+                }
+
+                return [
+                    'total' => $total,
+                    'selected_start' => $start,
+                    'selected_end' => $end,
+                    'provinces' => $provinces,
+                ];
             });
 
-        $total = 0;
-        foreach ($provinces as $province) {
-            $total += $province->news_count;
-        }
 
-        return ResponseHelper::response("Successfully get trending region", 200, [
-            'total' => $total,
-            'selected_start' => $start,
-            'selected_end' => $end,
-            'provinces' => $provinces,
+
+        return ResponseHelper::response("Successfully get trending region", 200, $data);
+    }
+
+    /**
+     * Get trending provinces by category id
+     *
+     * @param  int $id
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getTrendingProvincesById($id, Request $request)
+    {
+        $request->validate([
+            'start' => 'required|date',
+            'end' => 'required|date'
         ]);
+
+        $start = $request->start;
+        $end = $request->end;
+
+        $category = Category::findOrFail($id);
+
+        $data = Cache::tags(['trending'])
+            ->remember("trending.region.$id.$start.$end", 300, function () use ($id, $start, $end) {
+                $provinces = DB::table('provinces')
+                    ->select('provinces.id', 'provinces.name', 'provinces.latitude', 'provinces.longitude',
+                        DB::raw("
+                            (SELECT COUNT(*) FROM regencies
+                            JOIN news_regency ON news_regency.regency_id=regencies.id
+                            JOIN news ON news_regency.news_id=news.id
+                            JOIN animal_news ON news.id=animal_news.news_id
+                            JOIN animals ON animal_news.animal_id=animals.id
+                            WHERE regencies.province_id=provinces.id
+                            AND animals.category_id=$id
+                            AND news.news_date BETWEEN '$start' AND '$end') AS news_count
+                        ")
+                    )
+                    ->orderBy('news_count', 'desc')
+                    ->get();
+
+                $total = 0;
+                foreach ($provinces as $province) {
+                    $total += $province->news_count;
+                }
+
+                return [
+                    'total' => $total,
+                    'selected_start' => $start,
+                    'selected_end' => $end,
+                    'provinces' => $provinces,
+                ];
+            });
+
+
+
+        return ResponseHelper::response("Successfully get trending region where $category->name involved", 200, $data);
     }
 }
