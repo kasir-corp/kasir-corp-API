@@ -62,6 +62,7 @@ Route::group(["middleware" => "apikey"], function() {
             Route::get('/region/{id}', [RegionController::class, 'getTrendingProvincesById']);
             Route::get('/sites', [SiteController::class, 'getTrendingSites']);
             Route::get('/labels', [NewsController::class, 'getTrendingLabel']);
+            Route::get('/labels/{id}', [NewsController::class, 'getTrendingLabelById']);
         });
     });
 

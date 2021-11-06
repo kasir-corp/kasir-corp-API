@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 
 class NewsController extends Controller
 {
+    private $labels = ['penyelundupan', 'penyitaan', 'perburuan', 'perdagangan', 'others'];
     /**
      * Fetch all news and return it as Response
      *
@@ -50,22 +51,24 @@ class NewsController extends Controller
         $news = News::with(['organizations', 'site', 'animals.category', 'regencies.province']);
 
         if ($queryString != null) {
-            $news->where(function($query) use ($queryString) {
+            $news->where(function ($query) use ($queryString) {
                 $query->where('title', 'like', "%$queryString%")
                     ->orWhere('label', 'like', "%$queryString%")
-                    ->orWhereHas('regencies', function($query) use ($queryString) {
+                    ->orWhereHas('regencies', function ($query) use ($queryString) {
                         return $query->where('name', 'like', "%$queryString%");
                     })
-                    ->orWhereHas('animals', function($query) use ($queryString) {
+                    ->orWhereHas('animals', function ($query) use ($queryString) {
                         return $query->where('name', 'like', "%$queryString%");
                     })
-                    ->orWhereHas('site', function($query) use ($queryString) {
+                    ->orWhereHas('site', function ($query) use ($queryString) {
                         return $query->where('name', 'like', "%$queryString%");
                     })
-                    ->orWhereHas('organizations', function($query) use ($queryString) {
-                        return $query->where('name', 'like', "%$queryString%");
-                    }
-                );
+                    ->orWhereHas(
+                        'organizations',
+                        function ($query) use ($queryString) {
+                            return $query->where('name', 'like', "%$queryString%");
+                        }
+                    );
             });
         }
 
@@ -170,7 +173,7 @@ class NewsController extends Controller
 
         $url = $request->get('url');
 
-        $existing = Cache::tags(['news'])->remember($url, 3600, function() use ($url) {
+        $existing = Cache::tags(['news'])->remember($url, 3600, function () use ($url) {
             return News::where('url', $url)->exists();
         });
 
@@ -187,8 +190,7 @@ class NewsController extends Controller
      */
     public function getTrendingLabel(Request $request)
     {
-        $labels = ['penyelundupan', 'penyitaan', 'perburuan', 'perdagangan', 'others'];
-
+        $labels = $this->labels;
         $request->validate([
             'start' => 'required|date',
             'end' => 'required|date'
@@ -222,5 +224,48 @@ class NewsController extends Controller
             'selected_end' => $end,
             'labels' => $data
         ]);
+    }
+
+    public function getTrendingLabelById($id, Request $request)
+    {
+        $labels = $this->labels;
+        $request->validate([
+            'start' => 'required|date',
+            'end' => 'required|date'
+        ]);
+
+        $start = $request->start;
+        $end = $request->end;
+
+        $category = Category::findOrFail($id);
+
+        $data = Cache::tags(['trending'])->remember("trending.labels.$id.$start.$end", 300, function () use ($id, $start, $end, $labels) {
+            $data = [];
+            foreach ($labels as $label) {
+                $data[] = [
+                    'name' => $label,
+                    'news_count' => News::whereHas('animals', function ($query) use ($id) {
+                        $query->where('category_id', $id);
+                    })
+                        ->where('label', $label)
+                        ->whereBetween('date', [$start, $end])
+                        ->count()
+                ];
+            }
+
+            $total = 0;
+            foreach ($data as $label) {
+                $total += $label['news_count'];
+            }
+
+            return [
+                'total' => $total,
+                'selected_start' => $start,
+                'selected_end' => $end,
+                'labels' => $data
+            ];
+        });
+
+        return ResponseHelper::response("Successfully get trending label where $category->name involved", 200, $data);
     }
 }

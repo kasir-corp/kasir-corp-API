@@ -2444,7 +2444,7 @@ paths:
                   message:
                     type: string
                     description: Love letter from server ❤️
-                    example: "Successfully get trending sites"
+                    example: "Successfully get trending label"
                   data:
                     type: object
                     description: Returned data from server
@@ -2510,6 +2510,139 @@ paths:
                           "The end field is required.",
                           "The end is not a valid date."
                         ]
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
+  '/api/general/trending/labels/{categoryId}':
+    get:
+      tags:
+        - Trending
+      description: Get number of cases of a label where an animal involved. Sorted by number of cases descendingly
+      parameters:
+        - name: api_key
+          in: query
+          required: true
+          description: API key provided by Farrel Anshary
+          schema:
+            type: string
+          example: asdasd
+        - name: start
+          in: query
+          required: true
+          description: Start date of the news
+          schema:
+            type: string
+            format: date
+          example: '2015-10-24'
+        - name: end
+          in: query
+          required: true
+          description: End date of the news
+          schema:
+            type: string
+            format: date
+          example: '2021-10-31'
+        - name: categoryId
+          in: path
+          required: true
+          description: ID of the animal category
+          schema:
+            type: integer
+          example: 79
+      summary: Get trending labels by category ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Returned data from server
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully get trending label where kakatua involved"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      total:
+                        type: integer
+                        description: Total numbers of cases
+                        example: 49
+                      selected_start:
+                        type: string
+                        format: date
+                        description: Start date selected by user
+                        example: '2020-10-30'
+                      selected_end:
+                        type: string
+                        format: date
+                        description: End date selected by user
+                        example: '2021-10-30'
+                      labels:
+                        type: array
+                        description: Labels data
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              description: Name of the label
+                              example: penyelundupan
+                            news_count:
+                              type: integer
+                              description: Total cases in this label
+                              example: 18
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "The given data was invalid."
+                  errors:
+                    type: object
+                    description: List of error fields
+                    properties:
+                      start:
+                        type: array
+                        description: List of errors in start field
+                        items:
+                          type: string
+                        example: [
+                          "The start field is required.",
+                          "The start is not a valid date."
+                        ]
+                      end:
+                        type: array
+                        description: List of errors in end field
+                        items:
+                          type: string
+                        example: [
+                          "The end field is required.",
+                          "The end is not a valid date."
+                        ]
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "No query results for model [App\\Models\\Category] 1000"
         '401':
           description: Unauthorized
           content:
