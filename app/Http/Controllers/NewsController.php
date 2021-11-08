@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Helpers\ResponseHelper;
 use App\Models\Animal;
 use App\Models\Category;
+use App\Models\Edited;
 use App\Models\News;
 use App\Models\Organization;
 use App\Models\Regency;
 use App\Models\Site;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -229,9 +231,9 @@ class NewsController extends Controller
     /**
      * Get trending label where an animal is included
      *
-     * @param  \Illuminate\Http\Request $id
-     * @param  \Illuminate\Http\Response $request
-     * @return void
+     * @param  int $id
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
      */
     public function getTrendingLabelById($id, Request $request)
     {
@@ -274,5 +276,70 @@ class NewsController extends Controller
         });
 
         return ResponseHelper::response("Successfully get trending label where $category->name involved", 200, $data);
+    }
+
+    /**
+     * Get all news by category ID
+     *
+     * @param  int $id
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getAllNewsByCategoryId($id, Request $request)
+    {
+        $request->validate([
+            'start' => 'required|date',
+            'end' => 'required|date'
+        ]);
+
+        $start = $request->start;
+        $end = $request->end;
+
+        $category = Category::findOrFail($id);
+
+        $newsData = Cache::tags(['news'])->remember("news.$id.$start.$end", 300, function () use ($id, $start, $end) {
+            $news = News::whereHas('animals', function ($query) use ($id) {
+                $query->where('category_id', '=', $id);
+            })->orWhereHas('edited.animals', function ($query) use ($id, $start, $end) {
+                $query->where('category_id', '=', $id)
+                    ->whereBetween('news.date', [$start, $end]);
+            })->with([
+                'animals.category',
+                'regencies.province',
+                'site',
+                'organizations'
+            ])->get();
+
+            $data = [];
+            $total = 0;
+
+            foreach ($news as $singleNews) {
+                $edited = Edited::with([
+                    'animals.category',
+                    'regencies.province',
+                    'site',
+                    'organizations',
+                ])
+                    ->where('news_id', '=', "$singleNews->id")
+                    ->where('user_id', '=', Auth::id())
+                    ->first();
+
+                $data[] = [
+                    'news' => $singleNews,
+                    'edited' => $edited
+                ];
+
+                $total++;
+            }
+
+            return [
+                'total' => $total,
+                'selected_start' => $start,
+                'selected_end' => $end,
+                'data' => $data
+            ];
+        });
+
+        return ResponseHelper::response("Successfully get news where $category->name involved", 200, $newsData);
     }
 }

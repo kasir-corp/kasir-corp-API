@@ -32,4 +32,9 @@ class News extends Model
     {
         return $this->belongsToMany(Regency::class, 'news_regency', 'news_id', 'regency_id');
     }
+
+    public function edited()
+    {
+        return $this->hasMany(Edited::class, 'news_id');
+    }
 }

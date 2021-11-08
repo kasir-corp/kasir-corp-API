@@ -26,13 +26,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/test-pusher', function() {
+Route::get('/test-pusher', function () {
     event(new TestPusher());
     return "Event triggered";
 });
 
-Route::group(["middleware" => "apikey"], function() {
-    Route::group(["prefix" => "general"], function() {
+Route::group(["middleware" => "apikey"], function () {
+    Route::group(["prefix" => "general"], function () {
         Route::get("/provinces", [RegionController::class, 'getProvinces']);
         Route::get("/regencies/{provinceId}", [RegionController::class, 'getRegencies']);
         Route::get("/districts/{regencyId}", [RegionController::class, 'getDistricts']);
@@ -67,11 +67,15 @@ Route::group(["middleware" => "apikey"], function() {
         });
     });
 
-    Route::group(["prefix" => "auth"], function() {
+    Route::group(["prefix" => "private", "middleware" => "auth:sanctum"], function () {
+        Route::get('/news/{id}', [NewsController::class, 'getAllNewsByCategoryId']);
+    });
+
+    Route::group(["prefix" => "auth"], function () {
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/login', [AuthController::class, 'login']);
 
-        Route::group(['middleware' => 'auth:sanctum'], function() {
+        Route::group(['middleware' => 'auth:sanctum'], function () {
             Route::post('/logout', [AuthController::class, 'logout']);
         });
     });
