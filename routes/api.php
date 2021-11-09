@@ -34,6 +34,7 @@ Route::get('/test-pusher', function () {
 Route::group(["middleware" => "apikey"], function () {
     Route::group(["prefix" => "general"], function () {
         Route::get("/provinces", [RegionController::class, 'getProvinces']);
+        Route::get("/regencies", [RegionController::class, 'getAllRegencies']);
         Route::get("/regencies/{provinceId}", [RegionController::class, 'getRegencies']);
         Route::get("/districts/{regencyId}", [RegionController::class, 'getDistricts']);
 

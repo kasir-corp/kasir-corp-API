@@ -67,6 +67,80 @@ paths:
               schema:
                 $ref: '#/components/schemas/inline_response_401'
       summary: Get all provinces
+
+  '/api/general/regencies':
+    get:
+      tags:
+        - Region
+      description: Returns all regencies in Indonesia, literally all
+      parameters:
+        - name: api_key
+          in: query
+          description: API key provided by Farrel Anshary
+          required: true
+          schema:
+            type: string
+          example: asdasd
+      summary: Get all regencies
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully get all regencies"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      regencies:
+                        type: array
+                        description: Regencies in specified province
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: ID represents a unique identifier of the regency
+                              example: 1101
+                            name:
+                              type: string
+                              description: Name of the regency
+                              example: simeulue
+                            province:
+                              type: object
+                              description: Province where this regency located
+                              properties:
+                                id:
+                                  type: integer
+                                  description: ID represents a unique identifier of the province
+                                  example: 11
+                                name:
+                                  type: string
+                                  description: Name of the province
+                                  example: "aceh"
+                                latitude:
+                                  type: number
+                                  format: double
+                                  description: Latitude of the province
+                                  example: 4.36855
+                                longitude:
+                                  type: number
+                                  format: double
+                                  description: Longitude of the province
+                                  example: 97.0253
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
   '/api/general/regencies/{provinceId}':
     get:
       tags:

@@ -31,6 +31,24 @@ class RegionController extends Controller
     }
 
     /**
+     * Get all regencies, literally all
+     *
+     * @return \Illuminate\Http\Response;
+     */
+    public function getAllRegencies()
+    {
+        $regencies = Cache::rememberForever('regencies', function () {
+            return Regency::with('province')->get();
+        });
+
+        return ResponseHelper::response(
+            "Successfully get all regencies",
+            200,
+            ['regencies' => $regencies]
+        );
+    }
+
+    /**
      * Get all regencies from a province
      *
      * @param  int $provinceId
