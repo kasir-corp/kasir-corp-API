@@ -24,11 +24,11 @@ class AnimalController extends Controller
         $query = $request->get('query');
 
         if ($query != null) {
-            $animals = Cache::remember("animals_$query", 3600, function() use ($query) {
+            $animals = Cache::remember("animals_$query", 3600, function () use ($query) {
                 return Animal::with('category')->where('name', 'like', "%$query%")->get();
             });
         } else {
-            $animals = Cache::remember('animals', 3600, function() {
+            $animals = Cache::remember('animals', 3600, function () {
                 return Animal::with('category')->get();
             });
         }
@@ -46,11 +46,11 @@ class AnimalController extends Controller
         $query = $request->get('query');
 
         if ($query != null) {
-            $categories = Cache::remember("categories_$query", 3600, function() use ($query) {
+            $categories = Cache::remember("categories_$query", 3600, function () use ($query) {
                 return Category::where('name', 'like', "%$query%")->get();
             });
         } else {
-            $categories = Cache::remember('categories', 3600, function() {
+            $categories = Cache::remember('categories', 3600, function () {
                 return Category::all();
             });
         }
@@ -116,7 +116,9 @@ class AnimalController extends Controller
         $data = Cache::tags(['trending'])
             ->remember("trending.cases.$start.$end", 300, function () use ($start, $end) {
                 $categories = DB::table('categories')
-                    ->select('categories.id', 'categories.name',
+                    ->select(
+                        'categories.id',
+                        'categories.name',
                         DB::raw("(
                             SELECT count(*) FROM animals
                             JOIN `animal_news` ON `animal_news`.`animal_id` = `animals`.`id`
@@ -166,7 +168,9 @@ class AnimalController extends Controller
         $category = Cache::tags(['trending'])
             ->remember("trending.animal.$id.$start.$end", 300, function () use ($id, $start, $end) {
                 return DB::table('categories')
-                    ->select('categories.id', 'categories.name',
+                    ->select(
+                        'categories.id',
+                        'categories.name',
                         DB::raw("(
                             SELECT count(*) FROM animals
                             JOIN `animal_news` ON `animal_news`.`animal_id` = `animals`.`id`
@@ -220,38 +224,8 @@ class AnimalController extends Controller
 
         $categories = Cache::tags(['trending'])
             ->remember("trending.rising.$start.$end", 300, function () use ($startOldDate, $endOldDate, $startRecentDate, $endRecentDate) {
-                $categories = DB::table('categories')
-                    ->select('categories.id', 'categories.name',
-                        DB::raw("
-                                (SELECT COUNT(*) FROM animals
-                                JOIN animal_news ON animal_news.animal_id=animals.id
-                                JOIN news ON animal_news.news_id=news.id
-                                WHERE animals.category_id=categories.id
-                                AND news.news_date BETWEEN '$startOldDate' AND '$endOldDate'
-                            ) AS old
-                        "),
-                        DB::raw("
-                                (SELECT COUNT(*) FROM animals
-                                JOIN animal_news ON animal_news.animal_id=animals.id
-                                JOIN news ON animal_news.news_id=news.id
-                                WHERE animals.category_id=categories.id
-                                AND news.news_date BETWEEN '$startRecentDate' AND '$endRecentDate'
-                            ) AS recent
-                        ")
-                    )
-                    ->get();
-
-                foreach ($categories as $category) {
-                    $differences = $category->recent - $category->old;
-                    $category->total = $category->old + $category->recent;
-
-                    $percentage = $differences / ($category->old == 0 ? 1 : $category->old) * 100;
-                    $category->percentage = $percentage;
-
-                }
-
-                return $categories->sortBy('percentage', SORT_REGULAR, true)->values();
-        });
+                return $this->getRankings($startOldDate, $endOldDate, $startRecentDate, $endRecentDate);
+            });
 
         return ResponseHelper::response("Successfully get rising cases", 200, [
             'selected_start' => $startRecentDate->format('Y-m-d'),
@@ -260,5 +234,127 @@ class AnimalController extends Controller
             'old_end' => $endOldDate->format('Y-m-d'),
             'categories' => $categories,
         ]);
+    }
+
+    /**
+     * Get rank of an animal by category ID
+     *
+     * @param  integer $id
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getRisingRankById($id, Request $request)
+    {
+        $request->validate([
+            'start' => 'required|date',
+            'end' => 'required|date'
+        ]);
+
+        $start = $request->start;
+        $end = $request->end;
+
+        $category = Category::findOrFail($id);
+
+        $startRecentDate = Carbon::parse($start);
+        $startOldDate = Carbon::parse($start);
+        $startVeryOldDate = Carbon::parse($start);
+        $endRecentDate = Carbon::parse($end);
+        $endOldDate = Carbon::parse($end);
+        $endVeryOldDate = Carbon::parse($end);
+
+        $timeDifferences = $startRecentDate->diffInDays($endRecentDate);
+
+        $startOldDate->subDays($timeDifferences + 1);
+        $endOldDate->subDays($timeDifferences + 1);
+
+        $startVeryOldDate->subDays(($timeDifferences * 2) + 2);
+        $endVeryOldDate->subDays(($timeDifferences * 2) + 2);
+
+        $newRankings = Cache::tags(['trending'])
+            ->remember("trending.rising.$startRecentDate.$endRecentDate", 300, function () use ($startOldDate, $endOldDate, $startRecentDate, $endRecentDate) {
+                return $this->getRankings($startOldDate, $endOldDate, $startRecentDate, $endRecentDate);
+            });
+
+        $oldRankings = Cache::tags(['trending'])
+            ->remember("trending.rising.$startVeryOldDate.$endVeryOldDate", 300, function () use ($startVeryOldDate, $endVeryOldDate, $startOldDate, $endOldDate) {
+                return $this->getRankings($startVeryOldDate, $endVeryOldDate, $startOldDate, $endOldDate);
+            });
+
+        $newRank = null;
+        $oldRank = null;
+
+        foreach ($newRankings as $index => $category) {
+            if ($category->id == $id) {
+                $newRank = $index + 1;
+                break;
+            }
+        }
+
+        foreach ($oldRankings as $index => $category) {
+            if ($category->id == $id) {
+                $oldRank = $index + 1;
+                break;
+            }
+        }
+
+        return ResponseHelper::response(
+            "Successfully get rank of $category->name",
+            200,
+            [
+                'selected_end' => $endRecentDate->format('Y-m-d'),
+                'selected_start' => $startRecentDate->format('Y-m-d'),
+                'old_end' => $endOldDate->format('Y-m-d'),
+                'old_start' => $startOldDate->format('Y-m-d'),
+                'very_old_end' => $endVeryOldDate->format('Y-m-d'),
+                'very_old_start' => $startVeryOldDate->format('Y-m-d'),
+                'new_rank' => $newRank,
+                'old_rank' => $oldRank,
+            ]
+        );
+    }
+
+    /**
+     * Get rankings from database based on date
+     *
+     * @param  \Carbon\Carbon $startOldDate
+     * @param  \Carbon\Carbon $endOldDate
+     * @param  \Carbon\Carbon $startRecentDate
+     * @param  \Carbon\Carbon $endRecentDate
+     * @return \Illuminate\Support\Collection
+     */
+    private function getRankings(\Carbon\Carbon $startOldDate, \Carbon\Carbon $endOldDate, \Carbon\Carbon $startRecentDate, \Carbon\Carbon $endRecentDate)
+    {
+        $categories = DB::table('categories')
+            ->select(
+                'categories.id',
+                'categories.name',
+                DB::raw("
+                        (SELECT COUNT(*) FROM animals
+                        JOIN animal_news ON animal_news.animal_id=animals.id
+                        JOIN news ON animal_news.news_id=news.id
+                        WHERE animals.category_id=categories.id
+                        AND news.news_date BETWEEN '$startOldDate' AND '$endOldDate'
+                    ) AS old
+                "),
+                DB::raw("
+                        (SELECT COUNT(*) FROM animals
+                        JOIN animal_news ON animal_news.animal_id=animals.id
+                        JOIN news ON animal_news.news_id=news.id
+                        WHERE animals.category_id=categories.id
+                        AND news.news_date BETWEEN '$startRecentDate' AND '$endRecentDate'
+                    ) AS recent
+                ")
+            )
+            ->get();
+
+        foreach ($categories as $category) {
+            $differences = $category->recent - $category->old;
+            $category->total = $category->old + $category->recent;
+
+            $percentage = $differences / ($category->old == 0 ? 1 : $category->old) * 100;
+            $category->percentage = $percentage;
+        }
+
+        return $categories->sortBy('percentage', SORT_REGULAR, true)->values();
     }
 }

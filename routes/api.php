@@ -59,6 +59,7 @@ Route::group(["middleware" => "apikey"], function () {
             Route::get('/animals', [AnimalController::class, 'getNumbersOfCases']);
             Route::get('/animals/{id}', [AnimalController::class, 'getNumbersOfCasesById']);
             Route::get('/rising', [AnimalController::class, 'getRisingCases']);
+            Route::get('/rank/{id}', [AnimalController::class, 'getRisingRankById']);
             Route::get('/region', [RegionController::class, 'getTrendingProvinces']);
             Route::get('/region/{id}', [RegionController::class, 'getTrendingProvincesById']);
             Route::get('/sites', [SiteController::class, 'getTrendingSites']);
