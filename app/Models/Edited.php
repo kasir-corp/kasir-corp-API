@@ -9,6 +9,7 @@ class Edited extends Model
 {
     use HasFactory;
     protected $table = 'edited';
+    protected $fillable = ['user_id', 'news_id', 'date', 'site_id', 'label', 'notes'];
     protected $hidden = ['pivot', 'user_id', 'news_id', 'site_id', 'created_at', 'updated_at'];
 
     public function animals()

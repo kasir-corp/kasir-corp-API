@@ -17,7 +17,7 @@ class CreateEditedPivotsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('animal_id');
             $table->unsignedBigInteger('news_id');
-            $table->integer('amount');
+            $table->integer('amount')->nullable();
             $table->timestamps();
         });
 

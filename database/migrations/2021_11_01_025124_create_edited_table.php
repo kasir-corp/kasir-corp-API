@@ -18,7 +18,7 @@ class CreateEditedTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('news_id');
             $table->date('date');
-            $table->unsignedBigInteger('site_id');
+            $table->unsignedBigInteger('site_id')->nullable();
             $table->enum('label', ['penyelundupan', 'penyitaan', 'perburuan', 'perdagangan', 'others']);
             $table->text('notes');
             $table->timestamps();

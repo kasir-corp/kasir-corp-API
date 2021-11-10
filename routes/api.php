@@ -70,7 +70,8 @@ Route::group(["middleware" => "apikey"], function () {
     });
 
     Route::group(["prefix" => "private", "middleware" => "auth:sanctum"], function () {
-        Route::get('/news/{id}', [NewsController::class, 'getAllNewsByCategoryId']);
+        Route::get('/news/animals/{id}', [NewsController::class, 'getAllNewsByCategoryId']);
+        Route::put('/news/{newsId}', [NewsController::class, 'update']);
     });
 
     Route::group(["prefix" => "auth"], function () {

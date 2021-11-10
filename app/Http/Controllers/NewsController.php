@@ -8,7 +8,6 @@ use App\Models\Category;
 use App\Models\Edited;
 use App\Models\News;
 use App\Models\Organization;
-use App\Models\Regency;
 use App\Models\Site;
 use Exception;
 use Illuminate\Http\Request;
@@ -341,5 +340,72 @@ class NewsController extends Controller
         });
 
         return ResponseHelper::response("Successfully get news where $category->name involved", 200, $newsData);
+    }
+
+    public function update(int $newsId, Request $request)
+    {
+        $request->validate([
+            'date' => 'required|date',
+            'animals' => 'required',
+            'label' => 'required|in:penyelundupan,penyitaan,perburuan,perdagangan,others',
+            'regencies.*' => 'numeric'
+        ]);
+
+        $edited = Edited::firstOrNew(['user_id' => Auth::id(), 'news_id' => $newsId]);
+        $edited->date = $request->date;
+        $edited->notes = $request->notes;
+
+        $result = DB::transaction(function () use ($edited, $request) {
+            try {
+                if ($request->site) {
+                    $edited->site_id = Site::firstOrCreate(['name' => $request->site])->id;
+                }
+
+                $edited->save();
+
+                $animals = [];
+                foreach ($request->animals as $animal) {
+                    $animalName = strtolower($animal);
+                    $category = explode(" ", $animalName)[0];
+                    $categoryId = Category::firstOrCreate(['name' => $category])->id;
+                    $newAnimal = Animal::firstOrCreate([
+                        'name' => $animal
+                    ], [
+                        'category_id' => $categoryId
+                    ])->id;
+
+                    $animals[] = $newAnimal;
+                }
+                $edited->animals()->sync($animals);
+
+                $organizations = [];
+                foreach ($request->organizations as $organization) {
+                    $newOrganization = Organization::firstOrCreate(['name' => $organization])->id;
+                    $organizations[] = $newOrganization;
+                }
+                $edited->organizations()->sync($organizations);
+
+                $regencies = [];
+                foreach ($request->regencies as $regency) {
+                    $regencies[] = $regency;
+                }
+                $edited->regencies()->sync($regencies);
+
+                Cache::put('organizations', Organization::all(['id', 'name']));
+                Cache::put('sites', Site::all(['id', 'name']));
+                Cache::put('animals', Animal::all(['id', 'name']));
+
+                Cache::tags(['news', 'trending'])->flush();
+
+                $edited->load(['organizations', 'site', 'animals.category', 'regencies.province']);
+
+                return ResponseHelper::response("Successfully edit news", 200, ['edited' => $edited]);
+            } catch (Exception $e) {
+                DB::rollBack();
+                return ResponseHelper::response($e->getMessage(), 500);
+            }
+        });
+
+        return $result;
     }
 }
