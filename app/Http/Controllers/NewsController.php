@@ -342,6 +342,13 @@ class NewsController extends Controller
         return ResponseHelper::response("Successfully get news where $category->name involved", 200, $newsData);
     }
 
+    /**
+     * Edit news
+     *
+     * @param  int $newsId
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function update(int $newsId, Request $request)
     {
         $request->validate([
