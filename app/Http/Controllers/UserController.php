@@ -17,7 +17,7 @@ class UserController extends Controller
     public function getKeywords()
     {
         $keywords = Cache::remember('keywords', 3600, function () {
-            $users = User::all();
+            $users = User::whereNotNull('keyword')->get();
             $keyword = [];
             foreach ($users as $user) {
                 $keyword[] = $user->keyword;
