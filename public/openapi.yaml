@@ -1312,8 +1312,8 @@ paths:
     put:
       tags:
         - News
-      summary: Create a new news
-      description: Create a new news data to database
+      summary: Edit news
+      description: Edit a specified news by news id
       parameters:
         - in: header
           name: Authorization
