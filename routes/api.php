@@ -48,7 +48,6 @@ Route::group(["middleware" => "apikey"], function () {
         Route::get('/sites', [SiteController::class, 'getAllSites']);
         Route::post('/sites', [SiteController::class, 'store']);
 
-        Route::get('/news', [NewsController::class, 'getAllNews']);
         Route::post('/news', [NewsController::class, 'store']);
 
         Route::get('/keywords', [UserController::class, 'getKeywords']);
@@ -71,6 +70,7 @@ Route::group(["middleware" => "apikey"], function () {
 
     Route::group(["prefix" => "private", "middleware" => "auth:sanctum"], function () {
         Route::get('/news/animals/{id}', [NewsController::class, 'getAllNewsByCategoryId']);
+        Route::get('/news', [NewsController::class, 'getAllNews']);
         Route::put('/news/{newsId}', [NewsController::class, 'update']);
     });
 
