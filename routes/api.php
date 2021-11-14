@@ -50,6 +50,10 @@ Route::group(["middleware" => "apikey"], function () {
 
         Route::post('/news', [NewsController::class, 'store']);
 
+        // Drop auth temporarily, will be back to private soon
+        Route::get('/news/animals/{id}', [NewsController::class, 'getAllNewsByCategoryId']);
+        Route::get('/news', [NewsController::class, 'getAllNews']);
+
         Route::get('/keywords', [UserController::class, 'getKeywords']);
 
         Route::get('/check-url', [NewsController::class, 'checkLink']);
@@ -69,8 +73,6 @@ Route::group(["middleware" => "apikey"], function () {
     });
 
     Route::group(["prefix" => "private", "middleware" => "auth:sanctum"], function () {
-        Route::get('/news/animals/{id}', [NewsController::class, 'getAllNewsByCategoryId']);
-        Route::get('/news', [NewsController::class, 'getAllNews']);
         Route::put('/news/{newsId}', [NewsController::class, 'update']);
     });
 

@@ -72,67 +72,19 @@ class NewsController extends Controller
                         function ($query) use ($queryString) {
                             return $query->where('name', 'like', "%$queryString%");
                         }
-                    )
-                    ->orWhereHas('edited', function ($query) use ($queryString) {
-                        return $query->where('user_id', 1)
-                            ->where(function ($query) use ($queryString) {
-                                return $query->where('label', 'like', "%$queryString%")
-                                    ->orWhereHas('regencies', function ($query) use ($queryString) {
-                                        return $query->where('name', 'like', "%$queryString%");
-                                    })
-                                    ->orWhereHas('animals', function ($query) use ($queryString) {
-                                        return $query->where('name', 'like', "%$queryString%");
-                                    })
-                                    ->orWhereHas('site', function ($query) use ($queryString) {
-                                        return $query->where('name', 'like', "%$queryString%");
-                                    })
-                                    ->orWhereHas(
-                                        'organizations',
-                                        function ($query) use ($queryString) {
-                                            return $query->where('name', 'like', "%$queryString%");
-                                        }
-                                    );
-                            });
-                    });
+                    );
             });
         }
 
-        $news = $news->whereBetween('date', [$start, $end])
-            ->orWhereHas('edited', function ($query) use ($start, $end) {
-                return $query->whereBetween('date', [$start, $end]);
-            })
-            ->get();
+        $news = $news->whereBetween('date', [$start, $end])->get();
 
-        $data = [];
-        $total = 0;
-        foreach ($news as $singleNews) {
-            foreach ($singleNews->animals as $animal) {
-                $animal->amount = $animal->pivot->amount;
-            }
-
-            $edited = Edited::with([
-                'animals.category',
-                'regencies.province',
-                'site',
-                'organizations',
-            ])
-                ->where('news_id', '=', "$singleNews->id")
-                ->where('user_id', '=', Auth::id())
-                ->first();
-
-            $data[] = [
-                'news' => $singleNews,
-                'edited' => $edited
-            ];
-
-            $total++;
-        }
+        $total = count($news);
 
         return [
             'total' => $total,
             'selected_start' => $start,
             'selected_end' => $end,
-            'data' => $data
+            'news' => $news
         ];
     }
 
@@ -361,33 +313,13 @@ class NewsController extends Controller
                 'organizations'
             ])->get();
 
-            $data = [];
-            $total = 0;
-
-            foreach ($news as $singleNews) {
-                $edited = Edited::with([
-                    'animals.category',
-                    'regencies.province',
-                    'site',
-                    'organizations',
-                ])
-                    ->where('news_id', '=', "$singleNews->id")
-                    ->where('user_id', '=', Auth::id())
-                    ->first();
-
-                $data[] = [
-                    'news' => $singleNews,
-                    'edited' => $edited
-                ];
-
-                $total++;
-            }
+            $total = count($news);
 
             return [
                 'total' => $total,
                 'selected_start' => $start,
                 'selected_end' => $end,
-                'data' => $data
+                'news' => $news
             ];
         });
 
