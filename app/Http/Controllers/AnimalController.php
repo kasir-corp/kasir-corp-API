@@ -165,8 +165,18 @@ class AnimalController extends Controller
         $start = $request->start;
         $end = $request->end;
 
+        $startRecentDate = Carbon::parse($start);
+        $startOldDate = Carbon::parse($start);
+        $endRecentDate = Carbon::parse($end);
+        $endOldDate = Carbon::parse($end);
+
+        $timeDifferences = $startRecentDate->diffInDays($endRecentDate);
+
+        $startOldDate->subDays($timeDifferences + 1);
+        $endOldDate->subDays($timeDifferences + 1);
+
         $category = Cache::tags(['trending'])
-            ->remember("trending.animal.$id.$start.$end", 300, function () use ($id, $start, $end) {
+            ->remember("trending.animal.$id.$start.$end", 300, function () use ($id, $startRecentDate, $endRecentDate, $startOldDate, $endOldDate) {
                 return DB::table('categories')
                     ->select(
                         'categories.id',
@@ -176,11 +186,17 @@ class AnimalController extends Controller
                             JOIN `animal_news` ON `animal_news`.`animal_id` = `animals`.`id`
                             JOIN `news` ON `animal_news`.`news_id` = `news`.`id`
                             WHERE animals.category_id=categories.id
-                            AND news.news_date BETWEEN '$start' AND '$end'
-                        ) AS news_count")
+                            AND news.news_date BETWEEN '$startRecentDate' AND '$endRecentDate'
+                        ) AS new_count"),
+                        DB::raw("(
+                            SELECT count(*) FROM animals
+                            JOIN `animal_news` ON `animal_news`.`animal_id` = `animals`.`id`
+                            JOIN `news` ON `animal_news`.`news_id` = `news`.`id`
+                            WHERE animals.category_id=categories.id
+                            AND news.news_date BETWEEN '$startOldDate' AND '$endOldDate'
+                        ) AS old_count")
                     )
                     ->where('categories.id', '=', $id)
-                    ->orderBy('news_count', 'desc')
                     ->orderBy('categories.name')
                     ->first();
             });
