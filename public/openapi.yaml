@@ -828,137 +828,140 @@ paths:
                         description: End date selected by user
                         example: '2021-10-30'
                       news:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                            description: ID represents a unique identifier of the news
-                            example: 1
-                          title:
-                            type: string
-                            description: Title of the news
-                            example: Bunuh-Cincang Penyu Langka Dilindungi, 7 Nelayan Gunungkidul Ditangkap
-                          url:
-                            type: string
-                            description: URL of the news
-                            example: https://news.detik.com/berita-jawa-tengah/d-5541942/bunuh-cincang-penyu-langka-dilindungi-7-nelayan-gunungkidul-ditangkap
-                          date:
-                            type: string
-                            description: Date of the reported case
-                            example: "2021-04-22"
-                          news_date:
-                            type: string
-                            description: Date of the news
-                            example: "2021-04-22"
-                          is_trained:
-                            type: boolean
-                            description: Whether the row has been trained or not
-                            example: true
-                          label:
-                            type: string
-                            description: Label of the news
-                            example: "perburuan"
-                          organizations:
-                            type: array
-                            description: Organizations involved in the news
-                            items:
+                        type: array
+                        description: All news data
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: ID represents a unique identifier of the news
+                              example: 1
+                            title:
+                              type: string
+                              description: Title of the news
+                              example: Bunuh-Cincang Penyu Langka Dilindungi, 7 Nelayan Gunungkidul Ditangkap
+                            url:
+                              type: string
+                              description: URL of the news
+                              example: https://news.detik.com/berita-jawa-tengah/d-5541942/bunuh-cincang-penyu-langka-dilindungi-7-nelayan-gunungkidul-ditangkap
+                            date:
+                              type: string
+                              description: Date of the reported case
+                              example: "2021-04-22"
+                            news_date:
+                              type: string
+                              description: Date of the news
+                              example: "2021-04-22"
+                            is_trained:
+                              type: boolean
+                              description: Whether the row has been trained or not
+                              example: true
+                            label:
+                              type: string
+                              description: Label of the news
+                              example: "perburuan"
+                            organizations:
+                              type: array
+                              description: Organizations involved in the news
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                    description: ID represents a unique identifier of the organization
+                                  name:
+                                    type: string
+                                    description: Name of the organization
+                              example: [
+                                {
+                                  "id": 6,
+                                  "name": "BKSDA DIY"
+                                }
+                              ]
+                            site:
                               type: object
+                              description: Site source of the news
                               properties:
                                 id:
                                   type: integer
-                                  description: ID represents a unique identifier of the organization
+                                  description: ID represents a unique identifier of the website
+                                  example: 2
                                 name:
                                   type: string
-                                  description: Name of the organization
-                            example: [
-                              {
-                                "id": 6,
-                                "name": "BKSDA DIY"
-                              }
-                            ]
-                          site:
-                            type: object
-                            description: Site source of the news
-                            properties:
-                              id:
-                                type: integer
-                                description: ID represents a unique identifier of the website
-                                example: 2
-                              name:
-                                type: string
-                                description: Name of the website
-                                example: detiknews
-                          animals:
-                            type: array
-                            description: Animals involved in this case
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: integer
-                                  description: ID represents a unique identifier of the animal
-                                  example: 6
-                                name:
-                                  type: string
-                                  description: Name of the animal
-                                  example: Penyu Lekang
-                                scientific_name:
-                                  type: string
-                                  description: Scientific name of the animal
-                                  example: Lepidochelys olivacea
-                                amount:
-                                  type: integer
-                                  description: Amount of the animal involved
-                                  example: 1
-                                category:
-                                  type: object
-                                  description: Category of the animal
-                                  properties:
-                                    id:
-                                      type: integer
-                                      description: ID represents a unique identifier of the category
-                                      example: 1
-                                    name:
-                                      type: string
-                                      description: Category name
-                                      example: Penyu
-                          regencies:
-                            type: array
-                            description: Regencies where the case happened (nullable)
-                            items:
-                              type: object
-                              description: Regency where the case happened (nullable)
-                              properties:
-                                id:
-                                  type: integer
-                                  description: ID represents a unique identifier of the regency
-                                  example: 3403
-                                name:
-                                  type: string
-                                  description: Name of the regency
-                                  example: gunung kidul
-                                province:
-                                  type: object
-                                  description: Province where the case happened (nullable)
-                                  properties:
-                                    id:
-                                      type: integer
-                                      description: ID represents a unique identifier of the province
-                                      example: 34
-                                    name:
-                                      type: string
-                                      description: Name of the province
-                                      example: di yogyakarta
-                                    latitude:
-                                      type: number
-                                      format: double
-                                      description: Latitude of the province
-                                      example: 7.7956
-                                    longitude:
-                                      type: number
-                                      format: double
-                                      description: Longitude of the province
-                                      example: 110.3695
+                                  description: Name of the website
+                                  example: detiknews
+                            animals:
+                              type: array
+                              description: Animals involved in this case
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                    description: ID represents a unique identifier of the animal
+                                    example: 6
+                                  name:
+                                    type: string
+                                    description: Name of the animal
+                                    example: Penyu Lekang
+                                  scientific_name:
+                                    type: string
+                                    description: Scientific name of the animal
+                                    example: Lepidochelys olivacea
+                                  amount:
+                                    type: integer
+                                    description: Amount of the animal involved
+                                    example: 1
+                                  category:
+                                    type: object
+                                    description: Category of the animal
+                                    properties:
+                                      id:
+                                        type: integer
+                                        description: ID represents a unique identifier of the category
+                                        example: 1
+                                      name:
+                                        type: string
+                                        description: Category name
+                                        example: Penyu
+                            regencies:
+                              type: array
+                              description: Regencies where the case happened (nullable)
+                              items:
+                                type: object
+                                description: Regency where the case happened (nullable)
+                                properties:
+                                  id:
+                                    type: integer
+                                    description: ID represents a unique identifier of the regency
+                                    example: 3403
+                                  name:
+                                    type: string
+                                    description: Name of the regency
+                                    example: gunung kidul
+                                  province:
+                                    type: object
+                                    description: Province where the case happened (nullable)
+                                    properties:
+                                      id:
+                                        type: integer
+                                        description: ID represents a unique identifier of the province
+                                        example: 34
+                                      name:
+                                        type: string
+                                        description: Name of the province
+                                        example: di yogyakarta
+                                      latitude:
+                                        type: number
+                                        format: double
+                                        description: Latitude of the province
+                                        example: 7.7956
+                                      longitude:
+                                        type: number
+                                        format: double
+                                        description: Longitude of the province
+                                        example: 110.3695
 
         '422':
           description: Unprocessable Entity
