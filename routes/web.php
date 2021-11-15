@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('docs');
 });
 
-Route::view('/docs', 'documentation');
+Route::view('/docs', 'documentation')->name('docs');
