@@ -1576,257 +1576,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/inline_response_401'
 
-  '/api/general/news/animals/{categoryId}':
-    get:
-      tags:
-        - News
-      description: Get all news of an animal.
-      parameters:
-        - name: api_key
-          in: query
-          required: true
-          description: API key provided by Farrel Anshary
-          schema:
-            type: string
-          example: asdasd
-        - name: start
-          in: query
-          required: true
-          description: Start date of the query
-          schema:
-            type: string
-            format: date
-          example: "2021-10-31"
-        - name: end
-          in: query
-          required: true
-          description: End date of the query
-          schema:
-            type: string
-            format: date
-          example: "2021-11-31"
-        - name: query
-          in: query
-          required: false
-          description: Search query
-          schema:
-            type: string
-          example: Penangkapan penyu
-      summary: Get all news by category ID
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    description: Love letter from server ❤️
-                    example: "Successfully get news"
-                  data:
-                    type: object
-                    description: Returned data from server
-                    properties:
-                      total:
-                        type: integer
-                        description: Total numbers of cases
-                        example: 49
-                      selected_start:
-                        type: string
-                        format: date
-                        description: Start date selected by user
-                        example: '2020-10-30'
-                      selected_end:
-                        type: string
-                        format: date
-                        description: End date selected by user
-                        example: '2021-10-30'
-                      news:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                            description: ID represents a unique identifier of the news
-                            example: 1
-                          title:
-                            type: string
-                            description: Title of the news
-                            example: Bunuh-Cincang Penyu Langka Dilindungi, 7 Nelayan Gunungkidul Ditangkap
-                          url:
-                            type: string
-                            description: URL of the news
-                            example: https://news.detik.com/berita-jawa-tengah/d-5541942/bunuh-cincang-penyu-langka-dilindungi-7-nelayan-gunungkidul-ditangkap
-                          date:
-                            type: string
-                            description: Date of the reported case
-                            example: "2021-04-22"
-                          news_date:
-                            type: string
-                            description: Date of the news
-                            example: "2021-04-22"
-                          is_trained:
-                            type: boolean
-                            description: Whether the row has been trained or not
-                            example: true
-                          label:
-                            type: string
-                            description: Label of the news
-                            example: "perburuan"
-                          organizations:
-                            type: array
-                            description: Organizations involved in the news
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: integer
-                                  description: ID represents a unique identifier of the organization
-                                name:
-                                  type: string
-                                  description: Name of the organization
-                            example: [
-                              {
-                                "id": 6,
-                                "name": "BKSDA DIY"
-                              }
-                            ]
-                          site:
-                            type: object
-                            description: Site source of the news
-                            properties:
-                              id:
-                                type: integer
-                                description: ID represents a unique identifier of the website
-                                example: 2
-                              name:
-                                type: string
-                                description: Name of the website
-                                example: detiknews
-                          animals:
-                            type: array
-                            description: Animals involved in this case
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: integer
-                                  description: ID represents a unique identifier of the animal
-                                  example: 6
-                                name:
-                                  type: string
-                                  description: Name of the animal
-                                  example: Penyu Lekang
-                                scientific_name:
-                                  type: string
-                                  description: Scientific name of the animal
-                                  example: Lepidochelys olivacea
-                                amount:
-                                  type: integer
-                                  description: Amount of the animal involved
-                                  example: 1
-                                category:
-                                  type: object
-                                  description: Category of the animal
-                                  properties:
-                                    id:
-                                      type: integer
-                                      description: ID represents a unique identifier of the category
-                                      example: 1
-                                    name:
-                                      type: string
-                                      description: Category name
-                                      example: Penyu
-                          regencies:
-                            type: array
-                            description: Regencies where the case happened (nullable)
-                            items:
-                              type: object
-                              description: Regency where the case happened (nullable)
-                              properties:
-                                id:
-                                  type: integer
-                                  description: ID represents a unique identifier of the regency
-                                  example: 3403
-                                name:
-                                  type: string
-                                  description: Name of the regency
-                                  example: gunung kidul
-                                province:
-                                  type: object
-                                  description: Province where the case happened (nullable)
-                                  properties:
-                                    id:
-                                      type: integer
-                                      description: ID represents a unique identifier of the province
-                                      example: 34
-                                    name:
-                                      type: string
-                                      description: Name of the province
-                                      example: di yogyakarta
-                                    latitude:
-                                      type: number
-                                      format: double
-                                      description: Latitude of the province
-                                      example: 7.7956
-                                    longitude:
-                                      type: number
-                                      format: double
-                                      description: Longitude of the province
-                                      example: 110.3695
-
-        '422':
-          description: Unprocessable Entity
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    description: Love letter from server ❤️
-                    example: "The given data was invalid."
-                  errors:
-                    type: object
-                    description: List of error fields
-                    properties:
-                      start:
-                        type: array
-                        description: List of errors in start field
-                        items:
-                          type: string
-                        example: [
-                          "The start field is required.",
-                          "The start is not a valid date."
-                        ]
-                      end:
-                        type: array
-                        description: List of errors in end field
-                        items:
-                          type: string
-                        example: [
-                          "The end field is required.",
-                          "The end is not a valid date."
-                        ]
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    description: Love letter from server ❤️
-                    example: "No query results for model [App\\Models\\Category] 1000"
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_401'
-
   '/api/general/check-url':
     get:
       tags:
@@ -2332,7 +2081,7 @@ paths:
   '/api/general/trending/animals/{categoryId}':
     get:
       tags:
-        - Trending
+        - Watchlist
       description: Get number of cases of an animal. Sorted by number of cases descendingly
       parameters:
         - name: api_key
@@ -2607,7 +2356,7 @@ paths:
   '/api/general/trending/rank/{categoryId}':
     get:
       tags:
-        - Trending
+        - Watchlist
       description: Get rank of an animal
       parameters:
         - name: api_key
@@ -2883,7 +2632,7 @@ paths:
   '/api/general/trending/region/{categoryId}':
     get:
       tags:
-        - Trending
+        - Watchlist
       description: Get number of cases of regions where an animal involved. Sorted by number of cases descendingly
       parameters:
         - name: api_key
@@ -3149,7 +2898,7 @@ paths:
   '/api/general/trending/sites/{id}':
     get:
       tags:
-        - Trending
+        - Watchlist
       description: Get number of cases reported by a site. Sorted by number of cases descendingly
       parameters:
         - name: api_key
@@ -3401,7 +3150,7 @@ paths:
   '/api/general/trending/labels/{categoryId}':
     get:
       tags:
-        - Trending
+        - Watchlist
       description: Get number of cases of a label where an animal involved. Sorted by number of cases descendingly
       parameters:
         - name: api_key
@@ -3480,6 +3229,257 @@ paths:
                               type: integer
                               description: Total cases in this label
                               example: 18
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "The given data was invalid."
+                  errors:
+                    type: object
+                    description: List of error fields
+                    properties:
+                      start:
+                        type: array
+                        description: List of errors in start field
+                        items:
+                          type: string
+                        example: [
+                          "The start field is required.",
+                          "The start is not a valid date."
+                        ]
+                      end:
+                        type: array
+                        description: List of errors in end field
+                        items:
+                          type: string
+                        example: [
+                          "The end field is required.",
+                          "The end is not a valid date."
+                        ]
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "No query results for model [App\\Models\\Category] 1000"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
+  '/api/general/news/animals/{categoryId}':
+    get:
+      tags:
+        - Watchlist
+      description: Get all news of an animal.
+      parameters:
+        - name: api_key
+          in: query
+          required: true
+          description: API key provided by Farrel Anshary
+          schema:
+            type: string
+          example: asdasd
+        - name: start
+          in: query
+          required: true
+          description: Start date of the query
+          schema:
+            type: string
+            format: date
+          example: "2021-10-31"
+        - name: end
+          in: query
+          required: true
+          description: End date of the query
+          schema:
+            type: string
+            format: date
+          example: "2021-11-31"
+        - name: query
+          in: query
+          required: false
+          description: Search query
+          schema:
+            type: string
+          example: Penangkapan penyu
+      summary: Get all news by category ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully get news"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      total:
+                        type: integer
+                        description: Total numbers of cases
+                        example: 49
+                      selected_start:
+                        type: string
+                        format: date
+                        description: Start date selected by user
+                        example: '2020-10-30'
+                      selected_end:
+                        type: string
+                        format: date
+                        description: End date selected by user
+                        example: '2021-10-30'
+                      news:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            description: ID represents a unique identifier of the news
+                            example: 1
+                          title:
+                            type: string
+                            description: Title of the news
+                            example: Bunuh-Cincang Penyu Langka Dilindungi, 7 Nelayan Gunungkidul Ditangkap
+                          url:
+                            type: string
+                            description: URL of the news
+                            example: https://news.detik.com/berita-jawa-tengah/d-5541942/bunuh-cincang-penyu-langka-dilindungi-7-nelayan-gunungkidul-ditangkap
+                          date:
+                            type: string
+                            description: Date of the reported case
+                            example: "2021-04-22"
+                          news_date:
+                            type: string
+                            description: Date of the news
+                            example: "2021-04-22"
+                          is_trained:
+                            type: boolean
+                            description: Whether the row has been trained or not
+                            example: true
+                          label:
+                            type: string
+                            description: Label of the news
+                            example: "perburuan"
+                          organizations:
+                            type: array
+                            description: Organizations involved in the news
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  description: ID represents a unique identifier of the organization
+                                name:
+                                  type: string
+                                  description: Name of the organization
+                            example: [
+                              {
+                                "id": 6,
+                                "name": "BKSDA DIY"
+                              }
+                            ]
+                          site:
+                            type: object
+                            description: Site source of the news
+                            properties:
+                              id:
+                                type: integer
+                                description: ID represents a unique identifier of the website
+                                example: 2
+                              name:
+                                type: string
+                                description: Name of the website
+                                example: detiknews
+                          animals:
+                            type: array
+                            description: Animals involved in this case
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  description: ID represents a unique identifier of the animal
+                                  example: 6
+                                name:
+                                  type: string
+                                  description: Name of the animal
+                                  example: Penyu Lekang
+                                scientific_name:
+                                  type: string
+                                  description: Scientific name of the animal
+                                  example: Lepidochelys olivacea
+                                amount:
+                                  type: integer
+                                  description: Amount of the animal involved
+                                  example: 1
+                                category:
+                                  type: object
+                                  description: Category of the animal
+                                  properties:
+                                    id:
+                                      type: integer
+                                      description: ID represents a unique identifier of the category
+                                      example: 1
+                                    name:
+                                      type: string
+                                      description: Category name
+                                      example: Penyu
+                          regencies:
+                            type: array
+                            description: Regencies where the case happened (nullable)
+                            items:
+                              type: object
+                              description: Regency where the case happened (nullable)
+                              properties:
+                                id:
+                                  type: integer
+                                  description: ID represents a unique identifier of the regency
+                                  example: 3403
+                                name:
+                                  type: string
+                                  description: Name of the regency
+                                  example: gunung kidul
+                                province:
+                                  type: object
+                                  description: Province where the case happened (nullable)
+                                  properties:
+                                    id:
+                                      type: integer
+                                      description: ID represents a unique identifier of the province
+                                      example: 34
+                                    name:
+                                      type: string
+                                      description: Name of the province
+                                      example: di yogyakarta
+                                    latitude:
+                                      type: number
+                                      format: double
+                                      description: Latitude of the province
+                                      example: 7.7956
+                                    longitude:
+                                      type: number
+                                      format: double
+                                      description: Longitude of the province
+                                      example: 110.3695
+
         '422':
           description: Unprocessable Entity
           content:
