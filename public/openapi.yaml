@@ -2401,10 +2401,14 @@ paths:
                             type: string
                             description: Name of the category
                             example: kakatua
-                          news_count:
+                          new_count:
                             type: integer
-                            description: Numbers of news found in this category
+                            description: Numbers of new news found in this category
                             example: 3
+                          old_count:
+                            type: integer
+                            description: Numbers of old news found in this category
+                            example: 4
 
         '422':
           description: Unprocessable Entity
