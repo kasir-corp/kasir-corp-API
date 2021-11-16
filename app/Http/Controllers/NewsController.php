@@ -125,25 +125,31 @@ class NewsController extends Controller
 
                 $news->save();
 
-                foreach ($request->animals as $animal) {
-                    $category = Category::firstOrCreate(['name' => $animal['category']])->id;
-                    $newAnimal = Animal::firstOrCreate([
-                        'name' => $animal['name']
-                    ], [
-                        'scientific_name' => $animal['scientific_name'],
-                        'category_id' => $category
-                    ])->id;
+                if ($request->animals) {
+                    foreach ($request->animals as $animal) {
+                        $category = Category::firstOrCreate(['name' => $animal['category']])->id;
+                        $newAnimal = Animal::firstOrCreate([
+                            'name' => $animal['name']
+                        ], [
+                            'scientific_name' => $animal['scientific_name'],
+                            'category_id' => $category
+                        ])->id;
 
-                    $news->animals()->attach($newAnimal, ['amount' => $animal['amount']]);
+                        $news->animals()->attach($newAnimal, ['amount' => $animal['amount']]);
+                    }
                 }
 
-                foreach ($request->organizations as $organization) {
-                    $newOrganization = Organization::firstOrCreate(['name' => $organization])->id;
-                    $news->organizations()->attach($newOrganization);
+                if ($request->organizations) {
+                    foreach ($request->organizations as $organization) {
+                        $newOrganization = Organization::firstOrCreate(['name' => $organization])->id;
+                        $news->organizations()->attach($newOrganization);
+                    }
                 }
 
-                foreach ($request->regencies as $regency) {
-                    $news->regencies()->attach($regency);
+                if ($request->regencies) {
+                    foreach ($request->regencies as $regency) {
+                        $news->regencies()->attach($regency);
+                    }
                 }
 
                 Cache::put('organizations', Organization::all(['id', 'name']));
