@@ -107,7 +107,7 @@ class AnimalController extends Controller
     {
         $request->validate([
             'start' => 'required_with:end|date',
-            'end' => 'required_with:end|date'
+            'end' => 'required_with:start|date'
         ]);
 
         $start = $request->start;

@@ -4,8 +4,8 @@ servers:
   - url: https://kasir.farrelanshary.me/
 info:
   version: "1.0.0"
-  title: Kasir API
-  description: API punya kasir cug, jangan dicari
+  title: Natics API Documentation
+  description: API punya Natics ini weh, jangan dipake
 paths:
   '/api/general/provinces':
     get:
@@ -2059,7 +2059,7 @@ paths:
                         items:
                           type: string
                         example: [
-                          "The start field is required.",
+                          "The start field is required when end is present.",
                           "The start is not a valid date."
                         ]
                       end:
@@ -2068,7 +2068,7 @@ paths:
                         items:
                           type: string
                         example: [
-                          "The end field is required.",
+                          "The end field is required when start is present.",
                           "The end is not a valid date."
                         ]
         '401':

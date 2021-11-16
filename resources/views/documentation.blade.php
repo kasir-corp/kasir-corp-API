@@ -20,7 +20,7 @@
     </style>
   </head>
   <body>
-    <redoc spec-url="{{asset('openapi.yaml')}}"></redoc>
+    <redoc spec-url="{{asset('openapi.yaml')}}" hide-download-button></redoc>
     <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"> </script>
   </body>
 </html>
