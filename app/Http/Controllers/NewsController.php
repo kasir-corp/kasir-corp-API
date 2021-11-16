@@ -101,7 +101,6 @@ class NewsController extends Controller
             'url' => 'required|url|unique:App\Models\News,url',
             'date' => 'date',
             'is_trained' => 'required',
-            'animals' => 'required',
             'label' => 'required|in:penyelundupan,penyitaan,perburuan,perdagangan,others',
             'regencies' => 'required',
             'regencies.*' => 'numeric'

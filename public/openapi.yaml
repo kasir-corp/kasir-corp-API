@@ -1017,8 +1017,8 @@ paths:
                 - api_key
                 - title
                 - url
-                - isTrained
-                - animals
+                - is_trained
+                - news_date
                 - label
                 - regencies
               properties:
@@ -1040,7 +1040,7 @@ paths:
                   example: "2020-11-05"
                 news_date:
                   type: string
-                  description: Date of the news acquired from the scraper (optional)
+                  description: Date of the news acquired from the scraper
                   example: "1 week ago"
                 is_trained:
                   type: boolean
@@ -1074,6 +1074,8 @@ paths:
                   description: Animals involved in this case
                   items:
                     type: object
+                    required:
+                      - name
                     properties:
                       name:
                         type: string
@@ -1974,7 +1976,6 @@ paths:
           example: asdasd
         - name: start
           in: query
-          required: true
           description: Start date of the news
           schema:
             type: string
@@ -1982,7 +1983,6 @@ paths:
           example: '2015-10-24'
         - name: end
           in: query
-          required: true
           description: End date of the news
           schema:
             type: string

@@ -106,15 +106,20 @@ class AnimalController extends Controller
     public function getNumbersOfCases(Request $request)
     {
         $request->validate([
-            'start' => 'required|date',
-            'end' => 'required|date'
+            'start' => 'required_with:end|date',
+            'end' => 'required_with:end|date'
         ]);
 
         $start = $request->start;
         $end = $request->end;
 
+        $filter = null;
+        if ($start && $end) {
+            $filter = " AND news.news_date BETWEEN '$start' AND '$end'";
+        }
+
         $data = Cache::tags(['trending'])
-            ->remember("trending.cases.$start.$end", 300, function () use ($start, $end) {
+            ->remember("trending.cases.$start.$end", 300, function () use ($start, $end, $filter) {
                 $categories = DB::table('categories')
                     ->select(
                         'categories.id',
@@ -123,9 +128,7 @@ class AnimalController extends Controller
                             SELECT count(*) FROM animals
                             JOIN `animal_news` ON `animal_news`.`animal_id` = `animals`.`id`
                             JOIN `news` ON `animal_news`.`news_id` = `news`.`id`
-                            WHERE animals.category_id=categories.id
-                            AND news.news_date BETWEEN '$start' AND '$end'
-                        ) AS news_count")
+                            WHERE animals.category_id=categories.id" . $filter . ") AS news_count")
                     )
                     ->orderBy('news_count', 'desc')
                     ->orderBy('categories.name')
