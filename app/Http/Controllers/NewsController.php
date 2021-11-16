@@ -76,7 +76,7 @@ class NewsController extends Controller
             });
         }
 
-        $news = $news->whereBetween('date', [$start, $end])->get();
+        $news = $news->whereBetween('news_date', [$start, $end])->get();
 
         $total = count($news);
 
