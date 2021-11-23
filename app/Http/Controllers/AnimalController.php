@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 
 class AnimalController extends Controller
 {
+    private $labels = ['penyelundupan', 'penyitaan', 'perburuan', 'perdagangan', 'others'];
+
     /**
      * Get all animals
      *
@@ -149,6 +151,62 @@ class AnimalController extends Controller
 
 
         return ResponseHelper::response("Successfully get animal trending", 200, $data);
+    }
+
+    public function getNumbersOfCasesWithLabels(Request $request)
+    {
+        $request->validate([
+            'start' => 'required_with:end|date',
+            'end' => 'required_with:start|date'
+        ]);
+
+        $start = $request->start;
+        $end = $request->end;
+
+        $filter = null;
+        if ($start && $end) {
+            $filter = " AND news.news_date BETWEEN '$start' AND '$end'";
+        }
+
+        $data = Cache::tags(['trending'])
+            ->remember("trending.cases.$start.$end", 300, function () use ($start, $end, $filter) {
+                $subQuery = [
+                    'categories.id',
+                    'categories.name',
+                ];
+
+                foreach ($this->labels as $label) {
+                    $subQuery[] = DB::raw("(
+                        SELECT count(*) FROM animals
+                        JOIN `animal_news` ON `animal_news`.`animal_id` = `animals`.`id`
+                        JOIN `news` ON `animal_news`.`news_id` = `news`.`id`
+                        WHERE animals.category_id=categories.id" . $filter . "
+                        AND `news`.`label` = '$label') AS $label");
+                }
+
+                $categories = DB::table('categories')
+                    ->select($subQuery)
+                    ->addSelect(DB::raw("(
+                            SELECT penyelundupan + penyitaan + perdagangan + perburuan + others
+                        ) AS total"))
+                    ->orderBy('total', 'desc')
+                    ->orderBy('categories.name')
+                    ->get();
+
+                $total = 0;
+                foreach ($categories as $category) {
+                    $total += $category->total;
+                }
+
+                return [
+                    'selected_start' => $start,
+                    'selected_end' => $end,
+                    'total' => $total,
+                    'categories' => $categories,
+                ];
+            });
+
+        return $data;
     }
 
     /**
