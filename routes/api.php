@@ -70,6 +70,8 @@ Route::group(["middleware" => "apikey"], function () {
             Route::get('/sites/{id}', [SiteController::class, 'getTrendingSitesById']);
             Route::get('/labels', [NewsController::class, 'getTrendingLabel']);
             Route::get('/labels/{id}', [NewsController::class, 'getTrendingLabelById']);
+
+            Route::get('/year-pattern/{id}', [AnimalController::class, 'get5YearsPattern']);
         });
     });
 

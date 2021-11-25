@@ -3453,6 +3453,13 @@ paths:
           schema:
             type: string
           example: Penangkapan penyu
+        - name: categoryId
+          in: path
+          required: true
+          description: ID of the animal category
+          schema:
+            type: integer
+          example: 79
       summary: Get all news by category ID
       responses:
         '200':
@@ -3616,6 +3623,114 @@ paths:
                                       format: double
                                       description: Longitude of the province
                                       example: 110.3695
+
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "The given data was invalid."
+                  errors:
+                    type: object
+                    description: List of error fields
+                    properties:
+                      start:
+                        type: array
+                        description: List of errors in start field
+                        items:
+                          type: string
+                        example: [
+                          "The start field is required.",
+                          "The start is not a valid date."
+                        ]
+                      end:
+                        type: array
+                        description: List of errors in end field
+                        items:
+                          type: string
+                        example: [
+                          "The end field is required.",
+                          "The end is not a valid date."
+                        ]
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "No query results for model [App\\Models\\Category] 1000"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
+  '/api/general/trending/year-pattern/{categoryId}':
+    get:
+      tags:
+        - Watchlist
+      description: Get years pattern of an animal.
+      parameters:
+        - name: api_key
+          in: query
+          required: true
+          description: API key provided by Farrel Anshary
+          schema:
+            type: string
+          example: asdasd
+        - name: categoryId
+          in: path
+          required: true
+          description: ID of the animal category
+          schema:
+            type: integer
+          example: 79
+      summary: Get years pattern of an animal
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully get news"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      pattern:
+                        type: object
+                        description: Pattern data
+                        properties:
+                          "1":
+                            type: array
+                            description: Data of pattern in January
+                            items:
+                              type: object
+                              description: Data of pattern in each year
+                              properties:
+                                year:
+                                  type: string
+                                  description: Which year it is
+                                  example: "2018"
+                                pattern:
+                                  type: string
+                                  description: Pattern of January 2018
+                                  example: "up"
 
         '422':
           description: Unprocessable Entity

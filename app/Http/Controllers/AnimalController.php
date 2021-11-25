@@ -434,4 +434,57 @@ class AnimalController extends Controller
 
         return $categories->sortBy('percentage', SORT_REGULAR, true)->values();
     }
+
+    public function get5YearsPattern($id, Request $request)
+    {
+        $data = Cache::tags(['trending'])->remember("pattern.$id", 300, function () use ($id) {
+            $news = DB::table('news')
+                ->selectRaw("MONTH(news.date) as month")
+                ->selectRaw("YEAR(news.date) as year")
+                ->selectSub(
+                    DB::table('news')->selectRaw('COUNT(*)')
+                        ->join('animal_news', 'animal_news.news_id', '=', 'news.id')
+                        ->join('animals', 'animal_news.animal_id', '=', 'animals.id')
+                        ->where('animals.category_id', '=', $id)
+                        ->whereRaw("MONTH(news.date) = month")
+                        ->whereRaw("YEAR(news.date) = year"), "total"
+                )
+                ->groupBy('month')
+                ->groupBy('year')
+                ->get();
+
+
+
+            $data = [];
+            $newsCount = count($news);
+
+            for ($i = 1; $i < $newsCount; $i++) {
+                $thisMonth = $news[$i];
+                $lastMonth = $news[$i-1];
+
+                if ($thisMonth->total > $lastMonth->total) {
+                    $data[$thisMonth->month][] = [
+                        "year" => $thisMonth->year,
+                        "pattern" => "up"
+                    ];
+                } else if ($thisMonth->total < $lastMonth->total) {
+                    $data[$thisMonth->month][] = [
+                        "year" => $thisMonth->year,
+                        "pattern" => "down"
+                    ];
+                } else {
+                    $data[$thisMonth->month][] = [
+                        "year" => $thisMonth->year,
+                        "pattern" => "-"
+                    ];
+                }
+            }
+
+            return $data;
+        });
+
+        return ResponseHelper::response("Successfully get pattern", 200, [
+            'pattern' => $data
+        ]);
+    }
 }
