@@ -63,6 +63,7 @@ Route::group(["middleware" => "apikey"], function () {
             Route::get('/animals/labels', [AnimalController::class, 'getNumbersOfCasesWithLabels']);
             Route::get('/animals/{id}', [AnimalController::class, 'getNumbersOfCasesById']);
             Route::get('/rising', [AnimalController::class, 'getRisingCases']);
+            Route::get('rising/{id}', [AnimalController::class, 'getRisingCasesById']);
             Route::get('/rank/{id}', [AnimalController::class, 'getRisingRankById']);
             Route::get('/region', [RegionController::class, 'getTrendingProvinces']);
             Route::get('/region/{id}', [RegionController::class, 'getTrendingProvincesById']);
@@ -73,6 +74,7 @@ Route::group(["middleware" => "apikey"], function () {
 
             Route::get('/year-pattern/{id}', [AnimalController::class, 'get5YearsPattern']);
         });
+
     });
 
     Route::group(["prefix" => "private", "middleware" => "auth:sanctum"], function () {

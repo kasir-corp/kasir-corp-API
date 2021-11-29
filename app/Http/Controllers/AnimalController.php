@@ -273,6 +273,72 @@ class AnimalController extends Controller
         ]);
     }
 
+    public function getRisingCasesById($id, Request $request)
+    {
+        $request->validate([
+            'start' => 'required|date',
+            'end' => 'required|date'
+        ]);
+
+        $start = $request->start;
+        $end = $request->end;
+
+        $startRecentDate = Carbon::parse($start);
+        $startOldDate = Carbon::parse($start);
+        $endRecentDate = Carbon::parse($end);
+        $endOldDate = Carbon::parse($end);
+
+        $timeDifferences = $startRecentDate->diffInDays($endRecentDate);
+
+        $startOldDate->subDays($timeDifferences + 1);
+        $endOldDate->subDays($timeDifferences + 1);
+
+        $category = Category::findOrFail($id);
+
+        $animals = Cache::tags(['trending'])
+            ->remember("trending.animal.v2.$id.$start.$end", 500, function () use ($id, $startRecentDate, $endRecentDate, $startOldDate, $endOldDate) {
+            $animals = DB::table('animals')
+                ->select('id', 'name', 'scientific_name')
+                ->selectRaw("(
+                    SELECT COUNT(*) FROM animal_news
+                    JOIN news ON animal_news.news_id = news.id
+                    WHERE animal_news.animal_id=animals.id
+                    AND news.news_date BETWEEN '$startRecentDate' AND '$endRecentDate'
+                ) as recent")
+                ->selectRaw("(
+                    SELECT COUNT(*) FROM animal_news
+                    JOIN news ON animal_news.news_id = news.id
+                    WHERE animal_news.animal_id=animals.id
+                    AND news.news_date BETWEEN '$startOldDate' AND '$endOldDate'
+                ) as old")
+                ->where('animals.category_id', $id)
+                ->get();
+
+            foreach ($animals as $animal) {
+                $differences = $animal->recent - $animal->old;
+                $animal->differences = $differences;
+                $animal->total = $animal->old + $animal->recent;
+
+                $percentage = $differences / ($animal->old == 0 ? 1 : $animal->old) * 100;
+                $animal->percentage = $percentage;
+            }
+
+            return $animals->sortBy('percentage', SORT_REGULAR, true)->values();;
+        });
+
+        return ResponseHelper::response(
+            "Successfully get numbers of cases of $category->name",
+            200,
+            [
+                'selected_start' => $startRecentDate->format('Y-m-d'),
+                'selected_end' => $endRecentDate->format('Y-m-d'),
+                'old_start' => $startOldDate->format('Y-m-d'),
+                'old_end' => $endOldDate->format('Y-m-d'),
+                'animals' => $animals
+            ]
+        );
+    }
+
     /**
      * Get percentage of cases by category, sorted by percentage
      *
@@ -447,7 +513,8 @@ class AnimalController extends Controller
                         ->join('animals', 'animal_news.animal_id', '=', 'animals.id')
                         ->where('animals.category_id', '=', $id)
                         ->whereRaw("MONTH(news.date) = month")
-                        ->whereRaw("YEAR(news.date) = year"), "total"
+                        ->whereRaw("YEAR(news.date) = year"),
+                    "total"
                 )
                 ->groupBy('month')
                 ->groupBy('year')
@@ -460,7 +527,7 @@ class AnimalController extends Controller
 
             for ($i = 1; $i < $newsCount; $i++) {
                 $thisMonth = $news[$i];
-                $lastMonth = $news[$i-1];
+                $lastMonth = $news[$i - 1];
 
                 if ($thisMonth->total > $lastMonth->total) {
                     $data[$thisMonth->month][] = [
