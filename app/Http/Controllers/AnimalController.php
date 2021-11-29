@@ -169,7 +169,7 @@ class AnimalController extends Controller
         }
 
         $data = Cache::tags(['trending'])
-            ->remember("trending.cases.$start.$end", 300, function () use ($start, $end, $filter) {
+            ->remember("trending.cases.labels.$start.$end", 300, function () use ($start, $end, $filter) {
                 $subQuery = [
                     'categories.id',
                     'categories.name',
@@ -207,6 +207,68 @@ class AnimalController extends Controller
             });
 
         return $data;
+    }
+
+    public function getNumbersOfCasesWithLabelsById($id, Request $request)
+    {
+        $request->validate([
+            'start' => 'required_with:end|date',
+            'end' => 'required_with:start|date'
+        ]);
+
+        $start = $request->start;
+        $end = $request->end;
+
+        $filter = null;
+        if ($start && $end) {
+            $filter = " AND news.news_date BETWEEN '$start' AND '$end'";
+        }
+
+        $category = Category::findOrFail($id);
+
+        $data = Cache::tags(['trending'])
+            ->remember("trending.cases.labels.$id.$start.$end", 500, function () use ($id, $start, $end, $filter) {
+                $subQuery = [
+                    'animals.id',
+                    'animals.name',
+                ];
+
+                foreach ($this->labels as $label) {
+                    $subQuery[] = DB::raw("(
+                        SELECT count(*) FROM animal_news
+                        JOIN `news` ON `animal_news`.`news_id` = `news`.`id`
+                        WHERE animal_news.animal_id=animals.id" . $filter . "
+                        AND `news`.`label` = '$label') AS $label");
+                }
+
+                $animals = DB::table('animals')
+                    ->select($subQuery)
+                    ->addSelect(DB::raw("(
+                            SELECT penyelundupan + penyitaan + perdagangan + perburuan + others
+                        ) AS total"))
+                    ->where('animals.category_id', $id)
+                    ->orderBy('total', 'desc')
+                    ->orderBy('animals.name')
+                    ->get();
+
+                $total = 0;
+                foreach ($animals as $animal) {
+                    $total += $animal->total;
+                }
+
+                return [
+                    'total' => $total,
+                    'selected_start' => $start,
+                    'selected_end' => $end,
+                    'animals' => $animals,
+                ];
+            });
+
+        return ResponseHelper::response(
+            "Successfully get numbers of cases where $category->name involved",
+            200,
+            $data
+        );
     }
 
     /**

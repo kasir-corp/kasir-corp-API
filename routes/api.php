@@ -62,6 +62,7 @@ Route::group(["middleware" => "apikey"], function () {
         Route::group(["prefix" => "trending"], function () {
             Route::get('/animals', [AnimalController::class, 'getNumbersOfCases']);
             Route::get('/animals/labels', [AnimalController::class, 'getNumbersOfCasesWithLabels']);
+            Route::get('/animals/labels/{id}', [AnimalController::class, 'getNumbersOfCasesWithLabelsById']);
             Route::get('/animals/{id}', [AnimalController::class, 'getNumbersOfCasesById']);
             Route::get('/rising', [AnimalController::class, 'getRisingCases']);
             Route::get('rising/{id}', [AnimalController::class, 'getRisingCasesById']);
