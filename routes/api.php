@@ -75,6 +75,8 @@ Route::group(["middleware" => "apikey"], function () {
             Route::get('/labels/{id}', [NewsController::class, 'getTrendingLabelById']);
 
             Route::get('/year-pattern/{id}', [AnimalController::class, 'get5YearsPattern']);
+
+            Route::get('/monthly-cases', [AnimalController::class, 'totalCasesPerMonth']);
         });
 
     });

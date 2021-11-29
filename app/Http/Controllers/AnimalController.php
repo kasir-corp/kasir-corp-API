@@ -582,8 +582,6 @@ class AnimalController extends Controller
                 ->groupBy('year')
                 ->get();
 
-
-
             $data = [];
             $newsCount = count($news);
 
@@ -615,5 +613,55 @@ class AnimalController extends Controller
         return ResponseHelper::response("Successfully get pattern", 200, [
             'pattern' => $data
         ]);
+    }
+
+    public function totalCasesPerMonth(Request $request)
+    {
+        $data = Cache::tags(['trending'])
+            ->remember('trending.monthly', 500, function() {
+                $news = DB::table('news')
+                    ->selectRaw("MONTH(news.date) as month")
+                    ->selectRaw("YEAR(news.date) as year")
+                    ->selectSub(
+                        DB::table('news')->selectRaw('COUNT(*)')
+                            ->whereRaw("MONTH(news.date) = month")
+                            ->whereRaw("YEAR(news.date) = year"),
+                        "total"
+                    )
+                    ->groupBy('month')
+                    ->groupBy('year')
+                    ->get();
+
+                $data = [];
+                foreach ($news as $singleNews) {
+                    $data[$singleNews->year][$singleNews->month] = $singleNews->total;
+                }
+
+                $finalData = [];
+                foreach ($data as $yearKey => $months) {
+                    $year = [];
+                    $total = 0;
+                    foreach ($months as $monthKey => $amount) {
+                        $temp = [
+                            'month' => $monthKey,
+                            'amount' => $amount
+                        ];
+
+                        $year[] = $temp;
+                        $total += $amount;
+                    }
+
+                    $finalData[] = [
+                        'year' => $yearKey,
+                        'total' => $total,
+                        'monthly' => $year
+                    ];
+                }
+
+                return $finalData;
+            }
+        );
+
+        return ResponseHelper::response("Successfully get monthly numbers of cases", 200, ['years' => $data]);
     }
 }
