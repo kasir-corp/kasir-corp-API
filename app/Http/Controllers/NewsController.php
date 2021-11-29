@@ -404,4 +404,20 @@ class NewsController extends Controller
 
         return $result;
     }
+
+    public function getLatestUpdate()
+    {
+        $latestNews = News::orderBy('created_at', 'desc')->first();
+        $fullTime = $latestNews->created_at;
+        $date = date('Y-m-d', strtotime($latestNews->created_at));
+        $latest = News::whereDate('created_at', $date)->count();
+        return ResponseHelper::response(
+            "Successfully get latest update",
+            200,
+            [
+                'latest' => $fullTime,
+                'count' => $latest
+            ]
+        );
+    }
 }

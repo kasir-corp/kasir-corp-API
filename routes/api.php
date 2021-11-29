@@ -53,6 +53,7 @@ Route::group(["middleware" => "apikey"], function () {
         // Drop auth temporarily, will be back to private soon
         Route::get('/news/animals/{id}', [NewsController::class, 'getAllNewsByCategoryId']);
         Route::get('/news', [NewsController::class, 'getAllNews']);
+        Route::get('/news/latest', [NewsController::class, 'getLatestUpdate']);
 
         Route::get('/keywords', [UserController::class, 'getKeywords']);
 

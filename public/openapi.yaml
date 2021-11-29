@@ -1651,6 +1651,53 @@ paths:
                           "The url must be a valid URL."
                         ]
 
+  '/api/general/news/latest':
+    get:
+      tags:
+        - News
+      description: Check latest update on database
+      summary: Check latest update
+      parameters:
+        - name: api_key
+          in: query
+          required: true
+          description: API key provided by Farrel Anshary
+          schema:
+            type: string
+          example: asdasd
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Returned data from server
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully check URL"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      latest:
+                        type: string
+                        format: datetime
+                        description: Latest updated news time
+                        example: "2021-11-10T16:25:47.000000Z"
+                      count:
+                        type: number
+                        description: Amount of news since last updated
+                        example: 5
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+
   '/api/general/keywords':
     get:
       tags:
