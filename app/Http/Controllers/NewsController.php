@@ -88,6 +88,26 @@ class NewsController extends Controller
         ];
     }
 
+    private function localizedstrtotime($string)
+    {
+        return strtotime(strtr(strtolower($string), [
+            'lalu' => 'ago',
+            'detik' => 'seconds',
+            'menit' => 'minutes',
+            'mnt' => 'minutes',
+            'jam' => 'hours',
+            'detik' => 'seconds',
+            'hari' => 'days',
+            'minggu' => 'weeks',
+            'bulan' => 'months',
+            'tahun' => 'years',
+            'mei' => 'may',
+            'agu' => 'aug',
+            'okt' => 'oct',
+            'des' => 'dec'
+        ]));
+    }
+
     /**
      * Save new news data
      *
@@ -114,7 +134,7 @@ class NewsController extends Controller
             'label' => $request->label,
         ]);
 
-        $news->news_date = date('Y-m-d', strtotime($request->news_date));
+        $news->news_date = date('Y-m-d', $this->localizedstrtotime($request->news_date));
 
         $result = DB::transaction(function () use ($news, $request) {
             try {
