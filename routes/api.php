@@ -77,6 +77,7 @@ Route::group(["middleware" => "apikey"], function () {
             Route::get('/year-pattern/{id}', [AnimalController::class, 'get5YearsPattern']);
 
             Route::get('/monthly-cases', [AnimalController::class, 'totalCasesPerMonth']);
+            Route::get('/monthly-cases/{id}', [AnimalController::class, 'totalCasesPerMonthById']);
         });
 
     });

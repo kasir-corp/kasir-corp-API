@@ -664,4 +664,62 @@ class AnimalController extends Controller
 
         return ResponseHelper::response("Successfully get monthly numbers of cases", 200, ['years' => $data]);
     }
+
+    public function totalCasesPerMonthById($id, Request $request)
+    {
+        $category = Category::findOrFail($id);
+
+        $data = Cache::tags(['trending'])
+            ->remember("trending.monthly.$id", 500, function () use ($id) {
+                $news = DB::table('news')
+                    ->selectRaw("MONTH(news.date) as month")
+                    ->selectRaw("YEAR(news.date) as year")
+                    ->selectSub(
+                        DB::table('news')->selectRaw('COUNT(*)')
+                            ->join('animal_news', 'animal_news.news_id', '=', 'news.id')
+                            ->join('animals', 'animal_news.animal_id', '=', 'animals.id')
+                            ->where('animals.category_id', '=', $id)
+                            ->whereRaw("MONTH(news.date) = month")
+                            ->whereRaw("YEAR(news.date) = year"),
+                        "total"
+                    )
+                    ->groupBy('month')
+                    ->groupBy('year')
+                    ->get();
+
+                $data = [];
+                foreach ($news as $singleNews) {
+                    $data[$singleNews->year][$singleNews->month] = $singleNews->total;
+                }
+
+                $finalData = [];
+                foreach ($data as $yearKey => $months) {
+                    $year = [];
+                    $total = 0;
+                    foreach ($months as $monthKey => $amount) {
+                        $temp = [
+                            'month' => $monthKey,
+                            'amount' => $amount
+                        ];
+
+                        $year[] = $temp;
+                        $total += $amount;
+                    }
+
+                    $finalData[] = [
+                        'year' => $yearKey,
+                        'total' => $total,
+                        'monthly' => $year
+                    ];
+                }
+
+                return $finalData;
+            });
+
+        return ResponseHelper::response(
+            "Successfully get monthly numbers of cases where $category->name involved",
+            200,
+            ['years' => $data]
+        );
+    }
 }
