@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 
 class RegionController extends Controller
 {
+    private $labels = ['penyelundupan', 'penyitaan', 'perburuan', 'perdagangan', 'others'];
+
     /**
      * Get all provinces
      *
@@ -94,8 +96,20 @@ class RegionController extends Controller
         $start = $request->start;
         $end = $request->end;
 
+        $subQuery = [];
+        foreach ($this->labels as $label) {
+            $subQuery[] = DB::raw("
+                (SELECT COUNT(*) FROM regencies
+                JOIN news_regency ON news_regency.regency_id=regencies.id
+                JOIN news ON news_regency.news_id=news.id
+                WHERE regencies.province_id=provinces.id
+                AND news.label='$label'
+                AND news.news_date BETWEEN '$start' AND '$end') AS $label
+            ");
+        }
+
         $data = Cache::tags(['trending'])
-            ->remember("trending.region.$start.$end", 300, function () use ($start, $end) {
+            ->remember("trending.region.$start.$end", 300, function () use ($start, $end, $subQuery) {
                 $provinces = DB::table('provinces')
                     ->select('provinces.id', 'provinces.name', 'provinces.latitude', 'provinces.longitude',
                         DB::raw("
@@ -106,6 +120,7 @@ class RegionController extends Controller
                             AND news.news_date BETWEEN '$start' AND '$end') AS news_count
                         ")
                     )
+                    ->addSelect($subQuery)
                     ->orderBy('news_count', 'desc')
                     ->get();
 
@@ -121,7 +136,6 @@ class RegionController extends Controller
                     'provinces' => $provinces,
                 ];
             });
-
 
 
         return ResponseHelper::response("Successfully get trending region", 200, $data);
@@ -146,8 +160,23 @@ class RegionController extends Controller
 
         $category = Category::findOrFail($id);
 
+        $subQuery = [];
+        foreach ($this->labels as $label) {
+            $subQuery[] = DB::raw("
+                (SELECT COUNT(*) FROM regencies
+                JOIN news_regency ON news_regency.regency_id=regencies.id
+                JOIN news ON news_regency.news_id=news.id
+                JOIN animal_news ON news.id=animal_news.news_id
+                JOIN animals ON animal_news.animal_id=animals.id
+                WHERE regencies.province_id=provinces.id
+                AND animals.category_id=$id
+                AND news.label='$label'
+                AND news.news_date BETWEEN '$start' AND '$end') AS $label
+            ");
+        }
+
         $data = Cache::tags(['trending'])
-            ->remember("trending.region.$id.$start.$end", 300, function () use ($id, $start, $end) {
+            ->remember("trending.region.$id.$start.$end", 300, function () use ($id, $start, $end, $subQuery) {
                 $provinces = DB::table('provinces')
                     ->select('provinces.id', 'provinces.name', 'provinces.latitude', 'provinces.longitude',
                         DB::raw("
@@ -161,6 +190,7 @@ class RegionController extends Controller
                             AND news.news_date BETWEEN '$start' AND '$end') AS news_count
                         ")
                     )
+                    ->addSelect($subQuery)
                     ->orderBy('news_count', 'desc')
                     ->get();
 

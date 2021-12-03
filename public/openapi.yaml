@@ -3092,7 +3092,27 @@ paths:
                             news_count:
                               type: integer
                               description: Total cases in this province
-                              example: 17
+                              example: 91
+                            penyelundupan:
+                              type: integer
+                              description: Total smuggling cases in this province
+                              example: 42
+                            penyitaan:
+                              type: integer
+                              description: Total foreclosure cases in this province
+                              example: 4
+                            perburuan:
+                              type: integer
+                              description: Total hunt cases in this province
+                              example: 45
+                            perdagangan:
+                              type: integer
+                              description: Total trafficking cases in this province
+                              example: 0
+                            others:
+                              type: integer
+                              description: Total other cases in this province
+                              example: 0
         '422':
           description: Unprocessable Entity
           content:
@@ -3228,7 +3248,27 @@ paths:
                             news_count:
                               type: integer
                               description: Total cases in this province
-                              example: 17
+                              example: 91
+                            penyelundupan:
+                              type: integer
+                              description: Total smuggling cases in this province
+                              example: 42
+                            penyitaan:
+                              type: integer
+                              description: Total foreclosure cases in this province
+                              example: 4
+                            perburuan:
+                              type: integer
+                              description: Total hunt cases in this province
+                              example: 45
+                            perdagangan:
+                              type: integer
+                              description: Total trafficking cases in this province
+                              example: 0
+                            others:
+                              type: integer
+                              description: Total other cases in this province
+                              example: 0
         '422':
           description: Unprocessable Entity
           content:
