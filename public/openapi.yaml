@@ -7,6 +7,106 @@ info:
   title: Natics API Documentation
   description: API punya Natics ini weh, jangan dipake
 paths:
+  '/api/general/notif':
+    post:
+      tags:
+        - General
+      description: Fire notification to Pusher
+      summary: Send notification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - api_key
+                - title
+                - body
+                - interest
+              properties:
+                api_key:
+                  type: string
+                  description: API key provided by Farrel Anshary
+                  example: asdasd
+                title:
+                  type: string
+                  description: Title of the notification
+                  example: New cases found!
+                body:
+                  type: string
+                  description: Body of the notification
+                  example: Done collecting news! We found 5 new cases
+                interest:
+                  type: string
+                  description: Interest (tag) of the notification. This interest must match with the interest in Swift
+                  example: cases-found
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Returned data from server
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "Successfully send notification"
+                  data:
+                    type: object
+                    description: Returned data from server
+                    properties:
+                      publishId:
+                        type: string
+                        description: Publish ID of this notification
+                        example: pubid-32498a2c-e237-40c1-9171-54428a5ec1f6
+
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Love letter from server ❤️
+                    example: "The given data was invalid."
+                  errors:
+                    type: object
+                    description: List of error fields
+                    properties:
+                      title:
+                        type: array
+                        description: List of errors in title field
+                        items:
+                          type: string
+                        example: [
+                          "The title field is required.",
+                        ]
+                      body:
+                        type: array
+                        description: List of errors in body field
+                        items:
+                          type: string
+                        example: [
+                          "The body field is required.",
+                        ]
+                      interest:
+                        type: array
+                        description: List of errors in interest field
+                        items:
+                          type: string
+                        example: [
+                          "The interest field is required.",
+                        ]
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
   '/api/general/provinces':
     get:
       tags:

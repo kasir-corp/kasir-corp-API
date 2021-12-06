@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Pusher\PushNotifications\PushNotifications;
 
 class NewsController extends Controller
 {
@@ -439,5 +440,39 @@ class NewsController extends Controller
                 'count' => $latest
             ]
         );
+    }
+
+    /**
+     * Send notification to pusher
+     *
+     * @param  string $title
+     * @param  string $body
+     * @return \Illuminate\Http\Response
+     */
+    public function sendNotif(Request $request)
+    {
+        $request->validate([
+            'title' => 'required',
+            'body' => 'required',
+            'interest' => 'required'
+        ]);
+
+        $beamsClient = new PushNotifications([
+            'instanceId' => env("PUSH_NOTIFICATION_INSTANCE_ID"),
+            'secretKey' => env('PUSH_NOTIFICATION_PRIMARY_KEY')
+        ]);
+
+        $publishResponse = $beamsClient->publishToInterests([$request->interest], [
+            'apns' => [
+                'aps' => [
+                    'alert' => [
+                        "title" => $request->title,
+                        "body" => $request->body
+                    ]
+                ]
+            ]
+        ]);
+
+        return ResponseHelper::response("Successfully send notification", 200, $publishResponse);
     }
 }

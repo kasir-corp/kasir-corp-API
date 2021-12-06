@@ -80,6 +80,7 @@ Route::group(["middleware" => "apikey"], function () {
             Route::get('/monthly-cases/{id}', [AnimalController::class, 'totalCasesPerMonthById']);
         });
 
+        Route::post('notif', [NewsController::class, 'sendNotif']);
     });
 
     Route::group(["prefix" => "private", "middleware" => "auth:sanctum"], function () {
