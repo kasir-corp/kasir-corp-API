@@ -4219,25 +4219,30 @@ paths:
                     type: object
                     description: Returned data from server
                     properties:
-                      pattern:
-                        type: object
-                        description: Pattern data
-                        properties:
-                          "1":
-                            type: array
-                            description: Data of pattern in January
-                            items:
-                              type: object
-                              description: Data of pattern in each year
-                              properties:
-                                year:
-                                  type: string
-                                  description: Which year it is
-                                  example: "2018"
-                                pattern:
-                                  type: string
-                                  description: Pattern of January 2018
-                                  example: "up"
+                      months:
+                        type: array
+                        description: Single month data
+                        items:
+                          type: object
+                          properties:
+                            month:
+                              type: number
+                              description: What month it is
+                              example: 1
+                            years:
+                              type: array
+                              description: Yearly pattern data
+                              items:
+                                type: object
+                                properties:
+                                  year:
+                                    type: number
+                                    description: What year it is
+                                    example: 2018
+                                  pattern:
+                                    type: string
+                                    description: Pattern in this year
+                                    example: "up"
 
         '422':
           description: Unprocessable Entity

@@ -590,28 +590,37 @@ class AnimalController extends Controller
                 $lastMonth = $news[$i - 1];
 
                 if ($thisMonth->total > $lastMonth->total) {
-                    $data[$thisMonth->month][] = [
-                        "year" => $thisMonth->year,
-                        "pattern" => "up"
-                    ];
+                    $data[$thisMonth->month][$thisMonth->year] = "up";
                 } else if ($thisMonth->total < $lastMonth->total) {
-                    $data[$thisMonth->month][] = [
-                        "year" => $thisMonth->year,
-                        "pattern" => "down"
-                    ];
+                    $data[$thisMonth->month][$thisMonth->year] = "down";
                 } else {
-                    $data[$thisMonth->month][] = [
-                        "year" => $thisMonth->year,
-                        "pattern" => "-"
-                    ];
+                    $data[$thisMonth->month][$thisMonth->year] = "-";
                 }
             }
 
-            return $data;
+            $finalData = [];
+            foreach ($data as $monthKey => $years) {
+                $year = [];
+                foreach ($years as $yearKey => $pattern) {
+                    $temp = [
+                        'year' => $yearKey,
+                        'pattern' => $pattern
+                    ];
+
+                    $year[] = $temp;
+                }
+
+                $finalData[] = [
+                    'month' => $monthKey,
+                    'years' => $year
+                ];
+            }
+
+            return $finalData;
         });
 
         return ResponseHelper::response("Successfully get pattern", 200, [
-            'pattern' => $data
+            'months' => $data
         ]);
     }
 
